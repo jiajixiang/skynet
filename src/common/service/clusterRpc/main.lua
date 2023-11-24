@@ -17,7 +17,8 @@ end
 
 local function initNotes()
     local db = Mongo.getdb()
-    local cursor = db.nodes:find()
+    local serverId = skynet.getenv("serverId")
+    local cursor = db.nodes:find({serverId = serverId})
     while cursor:hasNext() do
         local data = cursor:next()
         nodes[data.nodeId] = data.ip..":"..data.cluster_prot
@@ -33,25 +34,29 @@ end
 function command.REGISTER(serviceName)
     local addr = skynet.localname(serviceName)
     local nodeId = skynet.getenv("id")
+    local serverId = skynet.getenv("serverId")
     local db = Mongo.getdb()
-    local data = db.nodes:findOne({nodeId = nodeId})
+    local data = db.nodes:findOne({nodeId = nodeId, serverId = serverId})
     if not data then
         data = {
+            serverId = serverId,
             nodeId = nodeId,
             services = {},
         }
     end
+    data.serverId = serverId
     data.ip = skynet.getenv("ip")
     data.port = skynet.getenv("port")
     data.cluster_prot = skynet.getenv("cluster_prot")
     data.services[serviceName] = addr
-    db.nodes:update({nodeId = nodeId}, data, true, false)
+    db.nodes:update({nodeId = nodeId, serverId = serverId}, data, true, false)
+    nodes[data.nodeId] = data.ip..":"..data.cluster_prot
     cluster.register(serviceName, addr)
-    initNotes()
     return true
 end
 
 function command.RELOAD()
+    initNotes()
     cluster.reload(nodes)
     return nodes
 end
