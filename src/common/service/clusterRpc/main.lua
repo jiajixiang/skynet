@@ -73,8 +73,6 @@ skynet.register_protocol {
 
 skynet.init(function()
     require "common.base.init"
-    require "clusterProxy"
-    require "clusterAgent"
 end)
 
 skynet.start(function()

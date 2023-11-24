@@ -7,7 +7,7 @@ end)
 
 skynet.start(function()
     skynet.dispatch("lua", function(session, address, cmd, ...)
-
+        print(session, address, cmd, ...)
     end)
 
 	print("game service start")
@@ -17,24 +17,15 @@ skynet.start(function()
     if skynet.getenv("id") == nodeName then
         skynet.newservice("debug_console",8000)
     end
-    -- cluster = ClusterRpc.new(serviceName)
-    -- cluster:start()
     if skynet.getenv("cluster_prot") then
         local cluster = skynet.newservice("clusterRpc")
         skynet.name(".cluster", cluster)
     end
-    local cluster = skynet.localname(".cluster")
-    local ret = skynet.call(cluster, "lua", "register", serviceName)
-    print(ret)
-    local ret = skynet.call(cluster, "lua", "reload")
+    local clusterProxy = ClusterProxy.new()
+    clusterProxy:register(serviceName)
+    local ret = clusterProxy:reload()
     print(table.dump(ret))
-    local ret = skynet.call(cluster, "lua", "open")
-    print(ret)
-    local ret = skynet.call(cluster, "lua", "send", "login", ".login", "set", "-------")
-    print(ret)
-	-- skynet.newservice("db")
-	-- skynet.newservice("gate")
-	-- skynet.newservice("login")
-	-- skynet.newservice("agent")
+    clusterProxy:open()
+    clusterProxy:send("login", ".login", "set", "-------")
 	print("game service exit")
 end)
