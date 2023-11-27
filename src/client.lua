@@ -1,7 +1,7 @@
 package.cpath = "../tools/skynet/luaclib/?.so"
 package.path = "../tools/skynet/lualib/?.lua"
 local socket = require "client.socket"
-local pb = require "protobuf"
+local protobuf = require "protobuf"
 
 local function endunpack_message(msg)
     local typ,session,message_id = string.unpack("<I1I4I2",msg)
@@ -34,7 +34,7 @@ local function pack_message(cmd,args,typ,session)
 end
 
 fd = assert(socket.connect("127.0.0.1", 32001))
-    pb.register_file("../tools/protobuf/all.pb")
+protobuf.register_file("../tools/protobuf/all.pb")
     --编码
     local args = {
         id = 101,

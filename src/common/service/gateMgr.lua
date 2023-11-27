@@ -103,7 +103,7 @@ function CMD.open(source, conf)
     conf.port = listen_context.port
     listen_context = nil
     socketdriver.start(socket)
-    if handler.open then
+    if handler and handler.open then
         return handler.open(source, conf)
     end
 end
@@ -128,7 +128,7 @@ skynet.register_protocol {
 }
 
 skynet.start(function (handler)
-    skynet.dispatch("lua", function (_, address, cmd, ...)
+    skynet.dispatch("lua", function (session, address, cmd, ...)
         local f = CMD[cmd]
         if f then
             skynet.ret(skynet.pack(f(address, ...)))

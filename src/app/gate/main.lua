@@ -23,6 +23,7 @@ skynet.start(function()
     end
     clusterMgr = ClusterMgr.new()
     clusterMgr:register(serviceId)
-    skynet.newservice("gate")
+    local gateMgr = skynet.newservice("gateMgr")
+    skynet.send(gateMgr, "lua", "open", {})
 	print("gate service exit")
 end)
