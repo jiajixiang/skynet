@@ -8,6 +8,7 @@ end)
 skynet.start(function()
     skynet.dispatch("lua", function (session, address, cmd, ...)
         print(session, address, cmd, ...)
+        return true
 	end)
 
 	print("login service start")
@@ -17,16 +18,14 @@ skynet.start(function()
     if skynet.getenv("id") == nodeId then
         skynet.newservice("debug_console",8000)
     end
-    if skynet.getenv("cluster_prot") then
+    if skynet.getenv("cluster_port") then
         skynet.uniqueservice(true, "nodeMgr")
     end
     -- skynet.newservice("login")
-    if skynet.getenv("cluster_prot") then
+    if skynet.getenv("cluster_port") then
         skynet.uniqueservice(true, "nodeMgr")
     end
     clusterMgr = ClusterMgr.new()
     clusterMgr:register(serviceId)
-    -- local ret = skynet.call(cluster, "lua", "send", "login", ".login", "set", "-------")
-    -- print(ret)
 	print("login service exit")
 end)

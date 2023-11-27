@@ -6,26 +6,6 @@ skynet.init(function()
     require "app.gate.init"
 end)
 
---protobuf编码解码
-function test4()
-    pb.register_file("../protobuf/all.pb")
-    --编码
-    local msg = {
-        id = 101,
-        pw = "123456",
-    }
-    local buff = pb.encode("C2S_Login", msg)
-    print("len:"..string.len(buff))
-    --解码
-    local umsg = pb.decode("C2S_Login", buff)
-    if umsg then
-        print("id:"..umsg.id)
-        print("pw:"..umsg.pw)
-    else
-        print("error")
-    end
-end
-
 skynet.start(function()
     skynet.dispatch("lua", function (session, address, cmd, ...)
         print(session, address, cmd, ...)
@@ -38,19 +18,11 @@ skynet.start(function()
     if skynet.getenv("id") == nodeId then
         skynet.newservice("debug_console",8000)
     end
-    if skynet.getenv("cluster_prot") then
+    if skynet.getenv("cluster_port") then
         skynet.uniqueservice(true, "nodeMgr")
     end
-    skynet.newservice("gateWay")
-    clusterProxy = ClusterProxy.new()
-    clusterProxy:register(serviceId)
-    local ret = clusterProxy:reload()
-    print(table.dump(ret))
-    if skynet.getenv("id") == nodeId then
-        clusterProxy:open()
-    end
-    -- local ret = skynet.call(cluster, "lua", "send", "gate", ".gate", "set", "-------")
-    -- print(ret)
-    test4()
+    clusterMgr = ClusterMgr.new()
+    clusterMgr:register(serviceId)
+    skynet.newservice("gate")
 	print("gate service exit")
 end)

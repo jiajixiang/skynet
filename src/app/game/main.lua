@@ -18,12 +18,12 @@ skynet.start(function()
         skynet.newservice("debug_console",8000)
     end
     -- skynet.newservice("login")
-    if skynet.getenv("cluster_prot") then
+    if skynet.getenv("cluster_port") then
         skynet.uniqueservice(true, "nodeMgr")
     end
+    skynet.uniqueservice(true, "protoloader")
     clusterMgr = ClusterMgr.new()
     clusterMgr:register(serviceId)
     clusterMgr:send("login", ".login", "lua", "set", "-------")
-    -- clusterMgr:call("login", ".login", "lua", "set", "-------")
 	print("game service exit")
 end)

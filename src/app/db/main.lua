@@ -27,7 +27,7 @@ skynet.start(function()
     if skynet.getenv("id") == nodeId then
         skynet.newservice("debug_console",8000)
     end
-    if skynet.getenv("cluster_prot") then
+    if skynet.getenv("cluster_port") then
         skynet.uniqueservice(true, "nodeMgr")
     end
     local clusterProxy = ClusterProxy.new()

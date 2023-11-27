@@ -30,14 +30,16 @@ local function initNotes()
     local cursor = db.nodes:find({serverId = serverId})
     while cursor:hasNext() do
         local data = cursor:next()
-        nodes[data.nodeId] = data.ip..":"..data.cluster_prot
+        if data.cluster_port then
+            nodes[data.nodeId] = data.ip..":"..data.cluster_port
+        end
     end
 end
 
 local function init()
     initNotes()
-    local cluster_prot = tonumber(skynet.getenv("cluster_prot"))
-    cluster.open(cluster_prot)  
+    local cluster_port = tonumber(skynet.getenv("cluster_port"))
+    cluster.open(cluster_port)
     cluster.reload(nodes)
     return true
 end
@@ -68,10 +70,10 @@ function command.REGISTER(serviceName)
     data.serverId = serverId
     data.ip = skynet.getenv("ip")
     data.port = skynet.getenv("port")
-    data.cluster_prot = skynet.getenv("cluster_prot")
+    data.cluster_port = skynet.getenv("cluster_port")
     data.services[serviceName] = addr
     db.nodes:update({nodeId = nodeId, serverId = serverId}, data, true, false)
-    nodes[data.nodeId] = data.ip..":"..data.cluster_prot
+    nodes[data.nodeId] = data.ip..":"..data.cluster_port
     cluster.register(serviceName, addr)
     return true
 end

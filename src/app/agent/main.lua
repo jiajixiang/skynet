@@ -13,8 +13,13 @@ skynet.start(function()
     if skynet.getenv("id") == nodeId then
         skynet.newservice("debug_console",8000)
     end
-    cluster = ClusterRpc.new(serviceId)
-    cluster:start()
+    skynet.uniqueservice(true, "agentMgr")
+    if skynet.getenv("cluster_port") then
+        skynet.uniqueservice(true, "nodeMgr")
+    end
+    clusterMgr = ClusterMgr.new()
+    clusterMgr:register(serviceId)
+    --clusterMgr:send("login", ".login", "lua", "set", "-------")
 	print("agent service exit")
     skynet.exit()
 end)
