@@ -21,17 +21,17 @@ end)
 
 skynet.start(function()
 	print("db service start")
-    local nodeName = "db"
-    local serviceName = ".db"
-    skynet.name(serviceName, skynet.self())
-    if skynet.getenv("id") == nodeName then
+    local nodeId = "db"
+    local serviceId = ".db"
+    skynet.name(serviceId, skynet.self())
+    if skynet.getenv("id") == nodeId then
         skynet.newservice("debug_console",8000)
     end
     if skynet.getenv("cluster_prot") then
         skynet.uniqueservice(true, "nodeMgr")
     end
     local clusterProxy = ClusterProxy.new()
-    clusterProxy:register(serviceName)
+    clusterProxy:register(serviceId)
 
 	print("db service exit")
     skynet.exit()

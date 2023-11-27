@@ -1,38 +1,28 @@
 local queue = require "skynet.queue"
 local skynet = require "skynet"
-
+local cluster = require "cluster"
 local ClusterProxy = class("ClusterProxy")
 
-function ClusterProxy:ctor()
-    self.nodeMgr = skynet.localname(".nodeMgr")
+function ClusterProxy:ctor(nodeName, serviceName)
+    self.nodeName = nodeName
+    self.serviceName = serviceName
+    self.proxy = cluster.proxy(nodeName, "@"..serviceName)
 end
 
-function ClusterProxy:send(nodeName, serviceName, ...)
-    local addr = skynet.localname(serviceName)
+function ClusterProxy:send(...)
+    local addr = skynet.localname(self.serviceName)
     if addr then
-        return skynet.send(addr, "lua", ...)
+        return skynet.send(addr, ...)
     end
-    return skynet.send(self.nodeMgr, "lua", "send", nodeName, serviceName, ...)
+	return skynet.send(self.proxy, ...)
 end
 
-function ClusterProxy:call(nodeName, serviceName, ...)
-    local addr = skynet.localname(serviceName)
+function ClusterProxy:call(...)
+    local addr = skynet.localname(self.serviceName)
     if addr then
-        return skynet.call(addr, "lua", ...)
+        return skynet.call(addr, ...)
     end
-    return skynet.call(self.nodeMgr, "lua", "call", nodeName, serviceName, ...)
-end
-
-function ClusterProxy:register(serviceName)
-    return skynet.send(self.nodeMgr, "lua", "register", serviceName)
-end
-
-function ClusterProxy:reload()
-    return skynet.call(self.nodeMgr, "lua", "reload")
-end
-
-function ClusterProxy:open()
-    return skynet.send(self.nodeMgr, "lua", "open")
+	return skynet.call(self.proxy, ...)
 end
 
 return ClusterProxy

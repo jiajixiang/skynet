@@ -7,13 +7,13 @@ end)
 
 skynet.start(function()
 	print("agent service start")
-    local nodeName = "agent"
-    local serviceName = ".agent"
-    skynet.name(serviceName, skynet.self())
-    if skynet.getenv("id") == nodeName then
+    local nodeId = "agent"
+    local serviceId = ".agent"
+    skynet.name(serviceId, skynet.self())
+    if skynet.getenv("id") == nodeId then
         skynet.newservice("debug_console",8000)
     end
-    cluster = ClusterRpc.new(serviceName)
+    cluster = ClusterRpc.new(serviceId)
     cluster:start()
 	print("agent service exit")
     skynet.exit()

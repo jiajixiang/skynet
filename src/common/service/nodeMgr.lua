@@ -4,15 +4,24 @@ require "skynet.manager"	-- import skynet.register
 local command = {}
 local nodes = {}
 
-function command.SEND(nodeId, serviceName, ...)
-	local proxy = cluster.proxy(nodeId, "@"..serviceName)
-	skynet.send(proxy, "lua", ...)
-    return true
-end
+AllProxyDict = {
+    --[[ 
+        [nodeId] = {
+            [serviceName] = proxy
+    }
+    ]]--
+}
 
-function command.CALL(nodeId, serviceName, ...)
-    local proxy = cluster.proxy(nodeId, "@"..serviceName)
-	return skynet.call(proxy, "lua", ...)
+local function getProxy(nodeId, serviceName)
+    local proxy = AllProxyDict[nodeId] and AllProxyDict[nodeId][serviceName]
+    if not proxy then
+        proxy = ClusterProxy.new(nodeId, serviceName)
+        if not AllProxyDict[nodeId] then
+            AllProxyDict[nodeId] = {}
+        end
+        AllProxyDict[nodeId][serviceName] = proxy
+    end
+    return proxy
 end
 
 local function initNotes()
@@ -25,10 +34,22 @@ local function initNotes()
     end
 end
 
-function command.OPEN()
+local function init()
+    initNotes()
     local cluster_prot = tonumber(skynet.getenv("cluster_prot"))
-    cluster.open(cluster_prot)
+    cluster.open(cluster_prot)  
+    cluster.reload(nodes)
     return true
+end
+
+function command.SEND(nodeId, serviceName, ...)
+	local proxy = getProxy(nodeId, serviceName)
+	return proxy:send(...)
+end
+
+function command.CALL(nodeId, serviceName, ...)
+	local proxy = getProxy(nodeId, serviceName)
+	return proxy:call(...)
 end
 
 function command.REGISTER(serviceName)
@@ -55,11 +76,6 @@ function command.REGISTER(serviceName)
     return true
 end
 
-function command.RELOAD()
-    cluster.reload(nodes)
-    return nodes
-end
-
 skynet.init(function()
     require "common.base.init"
 end)
@@ -84,6 +100,6 @@ skynet.start(function()
 		end
 	end)
 	skynet.register(".nodeMgr")
-    initNotes()
+    init()
 --	skynet.traceproto("lua", false)	-- true off tracelog
 end)

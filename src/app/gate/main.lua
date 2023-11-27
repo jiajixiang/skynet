@@ -32,20 +32,21 @@ skynet.start(function()
 	end)
 
 	print("gate service start")
-    local nodeName = "gate"
-    local serviceName = ".gate"
-    skynet.name(serviceName, skynet.self())
-    if skynet.getenv("id") == nodeName then
+    local nodeId = "gate"
+    local serviceId = ".gate"
+    skynet.name(serviceId, skynet.self())
+    if skynet.getenv("id") == nodeId then
         skynet.newservice("debug_console",8000)
     end
     if skynet.getenv("cluster_prot") then
         skynet.uniqueservice(true, "nodeMgr")
     end
+    skynet.newservice("gateWay")
     clusterProxy = ClusterProxy.new()
-    clusterProxy:register(serviceName)
+    clusterProxy:register(serviceId)
     local ret = clusterProxy:reload()
     print(table.dump(ret))
-    if skynet.getenv("id") == nodeName then
+    if skynet.getenv("id") == nodeId then
         clusterProxy:open()
     end
     -- local ret = skynet.call(cluster, "lua", "send", "gate", ".gate", "set", "-------")

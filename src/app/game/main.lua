@@ -11,23 +11,19 @@ skynet.start(function()
     end)
 
 	print("game service start")
-    local nodeName = "game"
-    local serviceName = ".game"
-    skynet.name(serviceName, skynet.self())
-    if skynet.getenv("id") == nodeName then
+    local nodeId = "game"
+    local serviceId = ".game"
+    skynet.name(serviceId, skynet.self())
+    if skynet.getenv("id") == nodeId then
         skynet.newservice("debug_console",8000)
     end
     -- skynet.newservice("login")
     if skynet.getenv("cluster_prot") then
         skynet.uniqueservice(true, "nodeMgr")
     end
-    clusterProxy = ClusterProxy.new()
-    clusterProxy:register(serviceName)
-    local ret = clusterProxy:reload()
-    print(table.dump(ret))
-    if skynet.getenv("id") == nodeName then
-        clusterProxy:open()
-    end
-    clusterProxy:send("login", ".login", "set", "-------")
+    clusterMgr = ClusterMgr.new()
+    clusterMgr:register(serviceId)
+    clusterMgr:send("login", ".login", "lua", "set", "-------")
+    -- clusterMgr:call("login", ".login", "lua", "set", "-------")
 	print("game service exit")
 end)
