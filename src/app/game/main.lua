@@ -21,7 +21,7 @@ skynet.start(function()
         local cluster = skynet.newservice("clusterRpc")
         skynet.name(".cluster", cluster)
     end
-    local clusterProxy = ClusterProxy.new()
+    clusterProxy = ClusterProxy.new()
     clusterProxy:register(serviceName)
     local ret = clusterProxy:reload()
     print(table.dump(ret))
