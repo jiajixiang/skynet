@@ -28,10 +28,11 @@ skynet.start(function()
         skynet.newservice("debug_console",8000)
     end
     if skynet.getenv("cluster_prot") then
-        skynet.newservice("nodeMgr")
+        skynet.uniqueservice(true, "nodeMgr")
     end
     local clusterProxy = ClusterProxy.new()
     clusterProxy:register(serviceName)
+
 	print("db service exit")
     skynet.exit()
 end)

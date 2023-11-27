@@ -17,14 +17,17 @@ skynet.start(function()
     if skynet.getenv("id") == nodeName then
         skynet.newservice("debug_console",8000)
     end
+    -- skynet.newservice("login")
     if skynet.getenv("cluster_prot") then
-        skynet.newservice("nodeMgr")
+        skynet.uniqueservice(true, "nodeMgr")
     end
     clusterProxy = ClusterProxy.new()
     clusterProxy:register(serviceName)
     local ret = clusterProxy:reload()
     print(table.dump(ret))
-    clusterProxy:open()
+    if skynet.getenv("id") == nodeName then
+        clusterProxy:open()
+    end
     clusterProxy:send("login", ".login", "set", "-------")
 	print("game service exit")
 end)

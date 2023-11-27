@@ -18,13 +18,15 @@ skynet.start(function()
         skynet.newservice("debug_console",8000)
     end
     if skynet.getenv("cluster_prot") then
-        skynet.newservice("nodeMgr")
+        skynet.uniqueservice(true, "nodeMgr")
     end
-    local clusterProxy = ClusterProxy.new()
+    clusterProxy = ClusterProxy.new()
     clusterProxy:register(serviceName)
     local ret = clusterProxy:reload()
     print(table.dump(ret))
-    clusterProxy:open()
+    if skynet.getenv("id") == nodeName then
+        clusterProxy:open()
+    end
     -- local ret = skynet.call(cluster, "lua", "send", "login", ".login", "set", "-------")
     -- print(ret)
 	print("login service exit")
