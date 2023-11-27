@@ -56,25 +56,9 @@ function command.REGISTER(serviceName)
 end
 
 function command.RELOAD()
-    initNotes()
     cluster.reload(nodes)
     return nodes
 end
-
-skynet.register_protocol {
-	name = "cluster",
-	id = skynet.PTYPE_SYSTEM,
-    pack = function (...)
-        return ...
-    end,
-	unpack = function(...) 
-        return ... 
-    end,
-	dispatch = function()
-		-- reopen signal
-		print("SIGHUP")
-	end
-}
 
 skynet.init(function()
     require "common.base.init"
@@ -99,7 +83,7 @@ skynet.start(function()
 			error(string.format("Unknown command %s", tostring(cmd)))
 		end
 	end)
-	skynet.register(".cluster")
+	skynet.register(".nodeMgr")
     initNotes()
 --	skynet.traceproto("lua", false)	-- true off tracelog
 end)

@@ -27,9 +27,11 @@ skynet.start(function()
     if skynet.getenv("id") == nodeName then
         skynet.newservice("debug_console",8000)
     end
-    cluster = ClusterRpc.new(serviceName)
-    cluster:start()
-	skynet.newservice("gate")
+    if skynet.getenv("cluster_prot") then
+        skynet.newservice("nodeMgr")
+    end
+    local clusterProxy = ClusterProxy.new()
+    clusterProxy:register(serviceName)
 	print("db service exit")
     skynet.exit()
 end)

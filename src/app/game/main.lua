@@ -18,8 +18,7 @@ skynet.start(function()
         skynet.newservice("debug_console",8000)
     end
     if skynet.getenv("cluster_prot") then
-        local cluster = skynet.newservice("clusterRpc")
-        skynet.name(".cluster", cluster)
+        skynet.newservice("nodeMgr")
     end
     clusterProxy = ClusterProxy.new()
     clusterProxy:register(serviceName)
