@@ -1,6 +1,6 @@
 local cluster = require "cluster"
 local skynet = require "skynet"
-require "skynet.manager"	-- import skynet.register
+require "skynet.manager"
 local command = {}
 local nodes = {}
 

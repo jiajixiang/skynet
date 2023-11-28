@@ -21,9 +21,9 @@ skynet.start(function()
     if skynet.getenv("cluster_port") then
         skynet.uniqueservice(true, "nodeMgr")
     end
+    skynet.uniqueservice("protoloader")
     clusterMgr = ClusterMgr.new()
     clusterMgr:register(serviceId)
     local gateMgr = skynet.newservice("gateMgr")
-    skynet.send(gateMgr, "lua", "open", {})
 	print("gate service exit")
 end)
