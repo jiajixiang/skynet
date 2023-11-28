@@ -24,12 +24,10 @@ local function close_agent(fd)
 end
 
 function SOCKET.close(fd)
-	print("socket close",fd)
 	close_agent(fd)
 end
 
 function SOCKET.error(fd, msg)
-	print("socket error",fd, msg)
 	close_agent(fd)
 end
 
@@ -51,7 +49,6 @@ end
 
 skynet.start(function()
 	skynet.dispatch("lua", function(session, source, cmd, subcmd, ...)
-		print("gateMgr", session, source, cmd, subcmd, ...)
 		if cmd == "socket" then
 			local f = SOCKET[subcmd]
 			f(...)

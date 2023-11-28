@@ -73,17 +73,30 @@ local function pack_message(cmd,args,typ,session)
     return result
 end
 
+local function unpack_package(text)
+	local size = #text
+	if size < 2 then
+		return nil, text
+	end
+	local s = text:byte(1) * 256 + text:byte(2)
+	if size < s+2 then
+		return nil, text
+	end
+
+	return text:sub(3,2+s), text:sub(3+s)
+end
+
 protobuf.register_file("../tools/protobuf/all.pb")
 --编码
 local args = {
     id = 101,
     pw = "123456",
 }
-local message = pack_message("C2S_Login", args, 1, 1)
-print(message, type(message), string.len(message))
-local cmd,args,typ,session = endunpack_message(message)
-print(cmd,table.dump(args),typ,session)
+local pack = pack_message("C2S_Login", args, 1, 1)
+local package = string.pack(">s2", pack)
+-- local cmd,args,typ,session = endunpack_message(package)
+-- print(cmd,table.dump(args),typ,session)
 
 local fd = assert(socket.connect("127.0.0.1", 32001))
-socket.send(fd, message)
+socket.send(fd, package)
 socket.usleep(100)
