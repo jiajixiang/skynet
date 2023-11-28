@@ -99,4 +99,45 @@ local package = string.pack(">s2", pack)
 
 local fd = assert(socket.connect("127.0.0.1", 32001))
 socket.send(fd, package)
-socket.usleep(100)
+
+local function print_package(...)
+    print(...)
+end
+
+local last = ""
+local function recv_package(last)
+	local result
+	result, last = unpack_package(last)
+	if result then
+		return result, last
+	end
+	local r = socket.recv(fd)
+	if not r then
+		return nil, last
+	end
+	if r == "" then
+		error "Server closed"
+	end
+	return unpack_package(last .. r)
+end
+
+local function dispatch_package()
+	while true do
+		local v
+		v, last = recv_package(last)
+		if not v then
+			break
+		end
+		print_package(endunpack_message(v))
+	end
+end
+
+while true do
+	dispatch_package()
+	local cmd = socket.readstdin()
+	if cmd then
+
+	else
+		socket.usleep(100)
+	end
+end

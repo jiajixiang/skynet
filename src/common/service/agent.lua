@@ -35,6 +35,12 @@ local function send_package(pack)
 	socket.write(client_fd, package)
 end
 
+--编码
+local args = {
+    id = 101,
+    pw = "123456",
+}
+
 skynet.register_protocol {
 	name = "client",
 	id = skynet.PTYPE_CLIENT,
@@ -42,9 +48,10 @@ skynet.register_protocol {
 	dispatch = function(session, address, msg, ...)
 		assert(session == client_fd)
 		skynet.ignoreret()	-- session is fd, don't call skynet.ret
-		--skynet.trace()
 		local cmd,args,typ,session = skynet.call(".protoloader", "lua", "decode", msg)
         print("client", cmd, args, typ, session)
+		local pack = skynet.call(".protoloader", "lua", "encode", cmd, args, typ, session)
+		send_package(pack)
 	end,
 }
 
