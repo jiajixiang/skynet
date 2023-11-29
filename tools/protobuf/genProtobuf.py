@@ -8,7 +8,7 @@ protoId = 0
 protoIdDict = {}
 availableIdList = []
 protoDict = {}
-protoFile = "proto.lua"
+protoFile = "../../src/common/constant/proto.lua"
 os.system("protoc -o all.pb *.proto */*.proto")
 
 def getProtoId(protoName):
@@ -18,18 +18,18 @@ def getProtoId(protoName):
     protoId = protoId + 1
     return protoId
 
-def remove_special_characters(strings):
+def removeSpecialCharacters(strings):
     pattern = "[^a-zA-Z0-9_]"
     return re.sub(pattern, "", strings)
 
 def getProtoName(line):
     idx = line.find("S2C")
     if idx > 0 :
-        return remove_special_characters(line[idx:])
+        return removeSpecialCharacters(line[idx:])
     else :
         idx = line.find("C2S")
         if idx > 0 :
-            return remove_special_characters(line[idx:])
+            return removeSpecialCharacters(line[idx:])
 
 def initProtoDict():
     if os.path.exists(protoFile):

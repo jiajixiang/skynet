@@ -3,8 +3,10 @@ local protobuf = require "protobuf"
 local skynet = require "skynet"
 require "skynet.manager"
 local retTbl = {}
+require "common.init"
 protobuf.register_file("../protobuf/all.pb")
-
+local proto = require("common.constant.proto")
+local protoId2Cmd = {}
 --protobuf编码解码
 function test4()
     --编码
@@ -24,13 +26,19 @@ function test4()
     end
 end
 
+local function initProto()
+    for cmd, messageId in pairs(proto) do
+        protoId2Cmd[messageId] = cmd
+    end
+end
+
 local command = {}
 
 function command.decode(msg)
     local typ,session,message_id = string.unpack("<I1I4I2",msg)
     local args_bin = msg:sub(8)
     -- self.proto[message_id]
-    local cmd = "C2S_Login"
+    local cmd = protoId2Cmd[message_id]
     local args,err = protobuf.decode(cmd,args_bin)
     assert(err == nil,err)
     if typ == 1 then
@@ -40,7 +48,7 @@ function command.decode(msg)
 end
 
 function command.encode(cmd,args,typ,session)
-    local message_id = 1
+    local message_id = proto[cmd]
     typ = typ or 0
     session = session or 0
     local result = string.pack("<I1I4I2",typ,session,message_id)
@@ -61,5 +69,6 @@ skynet.start(function()
 		end
 	end)
 	skynet.register(".protoloader")
+    initProto()
     test4()
 end)
