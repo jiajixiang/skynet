@@ -12,7 +12,7 @@ skynet.start(function()
 
 	print("game service start")
     local nodeId = "game"
-    local serviceId = ".game"
+    local serviceId = ".main"
     skynet.name(serviceId, skynet.self())
     if skynet.getenv("id") == nodeId then
         skynet.newservice("debug_console",8000)

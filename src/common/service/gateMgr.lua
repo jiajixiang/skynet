@@ -47,6 +47,10 @@ function CMD.close(fd)
 	close_agent(fd)
 end
 
+skynet.init(function ()
+    require "common.init"
+end)
+
 skynet.start(function()
 	skynet.dispatch("lua", function(session, source, cmd, subcmd, ...)
 		if cmd == "socket" then
@@ -59,6 +63,10 @@ skynet.start(function()
 		end
 	end)
 
+    local serviceId = ".gateMgr"
+	skynet.register(serviceId)
+    clusterMgr = ClusterMgr.new()
+    clusterMgr:register(serviceId)
 	gate = skynet.newservice("gate")
     skynet.call(gate, "lua", "open" , {
 		port = tonumber(skynet.getenv("port")),

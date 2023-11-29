@@ -5,9 +5,8 @@ require "skynet.manager"
 local retTbl = {}
 require "common.init"
 protobuf.register_file("../protobuf/all.pb")
-local proto = require("common.constant.proto")
 local protoId2Cmd = {}
-
+local proto = loadfile("../protobuf/proto.lua")()
 --protobuf编码解码
 function test4()
     --编码
@@ -69,6 +68,9 @@ skynet.start(function()
 			error(string.format("Unknown command %s", tostring(cmd)))
 		end
 	end)
-	skynet.register(".protoloader")
+    local serviceId = ".protoloader"
+	skynet.register(serviceId)
+    clusterMgr = ClusterMgr.new()
+    clusterMgr:register(serviceId)
     initProto()
 end)

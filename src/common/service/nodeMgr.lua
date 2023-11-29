@@ -74,12 +74,13 @@ function command.REGISTER(serviceName)
     data.services[serviceName] = addr
     db.nodes:update({nodeId = nodeId, serverId = serverId}, data, true, false)
     nodes[data.nodeId] = data.ip..":"..data.cluster_port
+    print(serviceName, addr)
     cluster.register(serviceName, addr)
     return true
 end
 
 skynet.init(function()
-    require "common.base.init"
+    require "common.init"
 end)
 
 skynet.start(function()
@@ -101,7 +102,10 @@ skynet.start(function()
 			error(string.format("Unknown command %s", tostring(cmd)))
 		end
 	end)
-	skynet.register(".nodeMgr")
+
+    local serviceId = ".nodeMgr"
+	skynet.register(serviceId)
+    command.REGISTER(serviceId)
     init()
 --	skynet.traceproto("lua", false)	-- true off tracelog
 end)
