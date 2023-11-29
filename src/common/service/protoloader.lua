@@ -7,6 +7,7 @@ require "common.init"
 protobuf.register_file("../protobuf/all.pb")
 local proto = require("common.constant.proto")
 local protoId2Cmd = {}
+
 --protobuf编码解码
 function test4()
     --编码
@@ -70,5 +71,4 @@ skynet.start(function()
 	end)
 	skynet.register(".protoloader")
     initProto()
-    test4()
 end)

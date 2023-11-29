@@ -39,7 +39,10 @@ skynet.register_protocol {
 		skynet.ignoreret()	-- session is fd, don't call skynet.ret
 		local cmd,args,typ,session = skynet.call(".protoloader", "lua", "decode", msg)
         print("client", cmd, args, typ, session)
-		CMD.sendToClient(cmd, args)
+		CMD.sendToClient("S2C_Login", {
+			id = args.id,
+			result = 1,
+		})
 	end,
 }
 

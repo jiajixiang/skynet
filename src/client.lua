@@ -48,11 +48,26 @@ function table.dump(t,depth,name)
     return _dump(t,depth,name)
 end
 
+local proto = {
+    S2C_Player_Info = 1,
+    C2S_Login = 2,
+    S2C_Login = 3,
+    C2S_Logout = 4,
+    S2C_Logout = 5,
+}
+local protoId2Cmd = {}
+
+local function initProto()
+    for cmd, messageId in pairs(proto) do
+        protoId2Cmd[messageId] = cmd
+    end
+end
+initProto()
 local function endunpack_message(msg)
     local typ,session,message_id = string.unpack("<I1I4I2",msg)
     local args_bin = msg:sub(8)
     -- self.proto[message_id]
-    local cmd = "C2S_Login"
+    local cmd = protoId2Cmd[message_id]
     local args,err = protobuf.decode(cmd,args_bin)
     assert(err == nil,err)
     if typ == 1 then
@@ -62,7 +77,7 @@ local function endunpack_message(msg)
 end
 
 local function pack_message(cmd,args,typ,session)
-    local message_id = 1
+    local message_id = proto[cmd]
     typ = typ or 0
     session = session or 0
     local result = string.pack("<I1I4I2",typ,session,message_id)
