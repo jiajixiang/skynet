@@ -6,7 +6,6 @@ require "skynet.manager"
 require "common.init"
 
 local proto = {}
-local protoId2Cmd = {}
 local protoFileName = "../protobuf/proto.lua"
 --protobuf编码解码
 function test4()
@@ -28,8 +27,9 @@ function test4()
 end
 
 local function initProto()
-    for cmd, messageId in pairs(proto) do
-        protoId2Cmd[messageId] = cmd
+    for cmd, messageId in pairs(sharetable.query(protoFileName)) do
+        proto[cmd] = messageId
+        proto[messageId] = cmd
     end
 end
 
@@ -39,7 +39,7 @@ function command.decode(msg)
     local typ,session,message_id = string.unpack("<I1I4I2",msg)
     local args_bin = msg:sub(8)
     -- self.proto[message_id]
-    local cmd = protoId2Cmd[message_id]
+    local cmd = proto[message_id]
     local args,err = protobuf.decode(cmd,args_bin)
     assert(err == nil,err)
     if typ == 1 then
@@ -71,10 +71,8 @@ skynet.start(function()
 	end)
     local serviceId = ".protoloader"
 	skynet.register(serviceId)
-    clusterMgr = ClusterMgr.new()
-    clusterMgr:register(serviceId)
     protobuf.register_file("../protobuf/all.pb")
-    sharetable.loadfile(protoFileName)
-    proto = sharetable.query(protoFileName)
+    sharetable.loadfile(protoFileName, protoFileName)
+    -- proto = sharetable.query("proto")
     initProto()
 end)
