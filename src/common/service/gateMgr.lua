@@ -10,7 +10,7 @@ function SOCKET.open(fd, addr)
     if not agent[fd] then
 	    agent[fd] = skynet.newservice("agent")
     end
-	skynet.call(agent[fd], "lua", "start", { gate = gate, client = fd, gateMgr = skynet.self() })
+	skynet.call(agent[fd], "lua", "start", { gate = gate, client = fd, watchdog = skynet.self() })
 end
 
 local function close_agent(fd)

@@ -104,7 +104,6 @@ skynet.start(function()
 
     local serviceId = ".nodeMgr"
 	skynet.register(serviceId)
-    command.REGISTER(serviceId)
     init()
 --	skynet.traceproto("lua", false)	-- true off tracelog
 end)

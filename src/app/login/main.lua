@@ -21,11 +21,9 @@ skynet.start(function()
     if skynet.getenv("cluster_port") then
         skynet.uniqueservice(true, "nodeMgr")
     end
-    -- skynet.newservice("login")
-    if skynet.getenv("cluster_port") then
-        skynet.uniqueservice(true, "nodeMgr")
-    end
     clusterMgr = ClusterMgr.new()
     clusterMgr:register(serviceId)
+    skynet.uniqueservice("protoloader")
+    local gateMgr = skynet.newservice("gateMgr")
 	print("login service exit")
 end)
