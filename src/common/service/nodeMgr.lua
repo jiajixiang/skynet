@@ -74,7 +74,6 @@ function command.REGISTER(serviceName)
     data.services[serviceName] = addr
     db.nodes:update({nodeId = nodeId, serverId = serverId}, data, true, false)
     nodes[data.nodeId] = data.ip..":"..data.cluster_port
-    print(serviceName, addr)
     cluster.register(serviceName, addr)
     return true
 end

@@ -1,12 +1,13 @@
 
 local protobuf = require "protobuf"
 local skynet = require "skynet"
+local sharetable = require "skynet.sharetable"
 require "skynet.manager"
-local retTbl = {}
 require "common.init"
-protobuf.register_file("../protobuf/all.pb")
+
+local proto = {}
 local protoId2Cmd = {}
-local proto = loadfile("../protobuf/proto.lua")()
+local protoFileName = "../protobuf/proto.lua"
 --protobuf编码解码
 function test4()
     --编码
@@ -72,5 +73,8 @@ skynet.start(function()
 	skynet.register(serviceId)
     clusterMgr = ClusterMgr.new()
     clusterMgr:register(serviceId)
+    protobuf.register_file("../protobuf/all.pb")
+    sharetable.loadfile(protoFileName)
+    proto = sharetable.query(protoFileName)
     initProto()
 end)
