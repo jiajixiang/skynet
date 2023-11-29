@@ -30,17 +30,6 @@ function REQUEST:quit()
 	skynet.call(gateMgr, "lua", "close", client_fd)
 end
 
-local function send_package(pack)
-	local package = string.pack(">s2", pack)
-	socket.write(client_fd, package)
-end
-
---编码
-local args = {
-    id = 101,
-    pw = "123456",
-}
-
 skynet.register_protocol {
 	name = "client",
 	id = skynet.PTYPE_CLIENT,
@@ -50,8 +39,7 @@ skynet.register_protocol {
 		skynet.ignoreret()	-- session is fd, don't call skynet.ret
 		local cmd,args,typ,session = skynet.call(".protoloader", "lua", "decode", msg)
         print("client", cmd, args, typ, session)
-		local pack = skynet.call(".protoloader", "lua", "encode", cmd, args, typ, session)
-		send_package(pack)
+		CMD.sendToClient(cmd, args)
 	end,
 }
 
@@ -67,6 +55,14 @@ end
 function CMD.disconnect()
 	-- todo: do something before exit
 	skynet.exit()
+end
+
+function CMD.sendToClient(cmd, args)
+	local typ = 1
+	local session = 1
+	local pack = skynet.call(".protoloader", "lua", "encode", cmd, args, typ, session)
+	local package = string.pack(">s2", pack)
+	socket.write(client_fd, package)
 end
 
 skynet.start(function()

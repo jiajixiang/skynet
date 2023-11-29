@@ -16,3 +16,9 @@ C2S_Logout
 S2C_Logout
 id (Rid
 result (Rresultbproto3
+^
+player/player.proto"
+Player
+pid (Rpid"#
+S2C_Player_Info
+pid (Rpidbproto3
