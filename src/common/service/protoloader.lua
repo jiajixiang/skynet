@@ -38,7 +38,6 @@ local command = {}
 function command.decode(msg)
     local typ,session,message_id = string.unpack("<I1I4I2",msg)
     local args_bin = msg:sub(8)
-    -- self.proto[message_id]
     local cmd = proto[message_id]
     local args,err = protobuf.decode(cmd,args_bin)
     assert(err == nil,err)

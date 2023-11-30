@@ -7,7 +7,6 @@ end)
 
 skynet.start(function()
     skynet.dispatch("lua", function (session, address, cmd, ...)
-        print(session, address, cmd, ...)
         return true
 	end)
 

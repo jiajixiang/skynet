@@ -52,9 +52,13 @@ local proto = {
     S2C_Player_Info = 1,
     C2S_Login = 2,
     S2C_Login = 3,
-    C2S_Logout = 4,
-    S2C_Logout = 5,
+    S2C_Player_Infos = 4,
+    C2S_Create_Player = 5,
+    S2C_Create_Player = 6,
+    C2S_Logout = 7,
+    S2C_Logout = 8,
 }
+
 local protoId2Cmd = {}
 
 local function initProto()
@@ -73,7 +77,7 @@ local function endunpack_message(msg)
     if typ == 1 then
         assert(session ~= 0,"session not found")
     end
-    return cmd,args,typ,session
+    return cmd, table.dump(args), typ,session
 end
 
 local function pack_message(cmd,args,typ,session)
@@ -102,18 +106,23 @@ local function unpack_package(text)
 end
 
 protobuf.register_file("../tools/protobuf/all.pb")
---编码
-local args = {
-    id = 101,
-    pw = "123456",
-}
-local pack = pack_message("C2S_Login", args, 1, 1)
-local package = string.pack(">s2", pack)
--- local cmd,args,typ,session = endunpack_message(package)
--- print(cmd,table.dump(args),typ,session)
 
 local fd = assert(socket.connect("127.0.0.1", 32001))
-socket.send(fd, package)
+local function sendPack(cmd, args)
+    local pack = pack_message(cmd, args, 1, 1)
+    local package = string.pack(">s2", pack)
+    socket.send(fd, package)
+end
+
+sendPack("C2S_Login", {
+    account = "test",
+    password = "test",
+})
+
+sendPack("C2S_Create_Player", {
+    account = "test",
+    name = "123456",
+})
 
 local function print_package(...)
     print(...)

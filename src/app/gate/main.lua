@@ -1,15 +1,26 @@
 local skynet = require "skynet"
 local pb = require "protobuf"
 
+Rpc = {}
+Client = {}
+
 skynet.init(function()
     require "common.init"
     require "app.gate.init"
 end)
 
 skynet.start(function()
-    skynet.dispatch("lua", function (session, address, cmd, ...)
-        print(session, address, cmd, ...)
-	end)
+    skynet.dispatch("lua", function (session, address, cmd, subCmd, ...)
+        if cmd == "client" then
+            local func = Client[subCmd]
+			skynet.ret(skynet.pack(func(...)))
+        elseif cmd == "cluster" then
+            local func = Rpc[subCmd]
+			skynet.ret(skynet.pack(func(...)))
+		else
+			error(string.format("Unknown command %s", tostring(cmd)))
+		end
+    end)
 
 	print("gate service start")
     local nodeId = "gate"
@@ -24,6 +35,6 @@ skynet.start(function()
     clusterMgr = ClusterMgr.new()
     clusterMgr:register(serviceId)
     skynet.uniqueservice("protoloader")
-    local gateMgr = skynet.newservice("gateMgr")
+    gateMgr = skynet.newservice("gateMgr")
 	print("gate service exit")
 end)

@@ -5,7 +5,6 @@ function getLocalIp()
 	local ret = {}
     local fun = function(a)
         local str = string.sub(a,1,string.find(a,'/')-1)
-        print(str)
         if str~= '127.0.0.1' then 
             ip = str
         end
@@ -30,8 +29,8 @@ skynet.start(function()
     if skynet.getenv("cluster_port") then
         skynet.uniqueservice(true, "nodeMgr")
     end
-    local clusterProxy = ClusterProxy.new()
-    clusterProxy:register(serviceId)
+    clusterMgr = ClusterMgr.new()
+    clusterMgr:register(serviceId)
 
 	print("db service exit")
     skynet.exit()

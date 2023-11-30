@@ -1,5 +1,5 @@
 local skynet = require "skynet"
-
+local cluster = require "cluster"
 local CMD = {}
 local SOCKET = {}
 local gate
@@ -47,6 +47,14 @@ function CMD.close(fd)
 	close_agent(fd)
 end
 
+function CMD.sendToClient(fd, cmd, args)
+	local agent = agent[fd]
+	if not agent then
+		return
+	end
+	skynet.call(agent, "lua", "sendToClient", cmd, args)
+end
+
 skynet.init(function ()
     require "common.init"
 end)
@@ -62,11 +70,8 @@ skynet.start(function()
 			skynet.ret(skynet.pack(f(subcmd, ...)))
 		end
 	end)
-
     local serviceId = ".gateMgr"
 	skynet.register(serviceId)
-    clusterMgr = ClusterMgr.new()
-    clusterMgr:register(serviceId)
 	gate = skynet.newservice("gate")
     skynet.call(gate, "lua", "open" , {
 		port = tonumber(skynet.getenv("port")),

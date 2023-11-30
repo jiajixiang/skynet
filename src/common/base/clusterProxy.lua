@@ -10,19 +10,19 @@ function ClusterProxy:ctor(nodeName, serviceName)
 end
 
 function ClusterProxy:send(...)
-    local addr = skynet.localname(self.serviceName)
-    if addr then
-        return skynet.send(addr, ...)
+    if skynet.getenv("id") == self.nodeName then
+        local addr = skynet.localname(self.serviceName)
+        return skynet.send(addr, "lua", ...)
     end
-	return skynet.send(self.proxy, ...)
+	return skynet.send(self.proxy, "lua", ...)
 end
 
 function ClusterProxy:call(...)
-    local addr = skynet.localname(self.serviceName)
-    if addr then
-        return skynet.call(addr, ...)
+    if skynet.getenv("id") == self.nodeName then
+        local addr = skynet.localname(self.serviceName)
+        return skynet.call(addr, "lua", ...)
     end
-	return skynet.call(self.proxy, ...)
+	return skynet.call(self.proxy, "lua", ...)
 end
 
 return ClusterProxy

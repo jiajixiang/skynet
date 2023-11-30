@@ -1,13 +1,23 @@
 local skynet = require "skynet"
-
+require "skynet.manager"   --除了需要引入skynet包以外还要再引入skynet.manager包。
+Rpc = {}
+Client = {}
 skynet.init(function()
     require "common.init"
     require "app.game.init"
 end)
 
 skynet.start(function()
-    skynet.dispatch("lua", function(session, address, cmd, ...)
-        print(session, address, cmd, ...)
+    skynet.dispatch("lua", function(session, address, cmd, subCmd, ...)
+        if cmd == "client" then
+            local func = Client[subCmd]
+			skynet.ret(skynet.pack(func(...)))
+        elseif cmd == "cluster" then
+            local func = Rpc[subCmd]
+			skynet.ret(skynet.pack(func(...)))
+		else
+			error(string.format("Unknown command %s", tostring(cmd)))
+		end
     end)
 
 	print("game service start")
@@ -21,9 +31,8 @@ skynet.start(function()
     if skynet.getenv("cluster_port") then
         skynet.uniqueservice(true, "nodeMgr")
     end
-    skynet.uniqueservice(true, "protoloader")
     clusterMgr = ClusterMgr.new()
     clusterMgr:register(serviceId)
-    clusterMgr:send("login", ".login", "lua", "set", "-------")
-	print("game service exit")
+    -- clusterMgr:send("login", ".login", "lua", "set", "-------")
+    playerMgr = PlayerMgr.new()
 end)

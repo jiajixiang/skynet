@@ -1,0 +1,1 @@
+require "app.gate.client.playerMgr"

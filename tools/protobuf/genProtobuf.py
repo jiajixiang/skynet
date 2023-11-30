@@ -8,7 +8,7 @@ protoId = 0
 protoIdDict = {}
 availableIdList = []
 protoDict = {}
-protoFile = "../../src/common/constant/proto.lua"
+protoFile = "./proto.lua"
 os.system("protoc -o all.pb *.proto */*.proto")
 
 def getProtoId(protoName):
@@ -70,11 +70,9 @@ def genProtoDict():
                 for line in lines:
                     if line.find("message") >= 0 :
                         protoName = getProtoName(line)
-                        print(protoName)
                         if protoName :
                             if not protoDict.get(protoName):
                                 protoDict[protoName] = getProtoId(protoName)
-
 def main():
     initProtoDict()
     genProtoDict()

@@ -8,16 +8,15 @@ function ClusterMgr:ctor()
 end
 
 function ClusterMgr:send(nodeId, serviceName, ...)
-    local addr = skynet.localname(serviceName)
-    if addr then
+    if skynet.getenv("id") == nodeId then
         return skynet.send(addr, "lua", ...)
     end
 	return skynet.send(self.nodeMgr, "lua", "send", nodeId, serviceName, ...)
 end
 
 function ClusterMgr:call(nodeId, serviceName, ...)
-    local addr = skynet.localname(serviceName)
-    if addr then
+    if skynet.getenv("id") == nodeId then
+        local addr = skynet.localname(serviceName)
         return skynet.call(addr, "lua", ...)
     end
 	return skynet.call(self.nodeMgr, "lua", "call", nodeId, serviceName, ...)
