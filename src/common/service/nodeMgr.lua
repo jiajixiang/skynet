@@ -78,6 +78,10 @@ function command.REGISTER(serviceName)
     return true
 end
 
+function command.STOP()
+    skynet.abort()
+end
+
 skynet.init(function()
     require "common.init"
 end)

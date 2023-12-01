@@ -27,7 +27,7 @@ skynet.start(function()
     local serviceId = ".main"
     skynet.name(serviceId, skynet.self())
     if skynet.getenv("cluster_port") then
-        skynet.uniqueservice(true, "nodeMgr")
+        skynet.uniqueservice("nodeMgr")
     end
     if skynet.getenv("id") == nodeId then
         skynet.newservice("debug_console",8000)
@@ -36,5 +36,16 @@ skynet.start(function()
     clusterMgr:register(serviceId)
     skynet.uniqueservice("protoloader")
     gateMgr = skynet.newservice("gateMgr")
-	print("gate service exit")
+    while true do
+        local cmd = io.read()
+        if cmd == "stop" then
+            local service_mgr = skynet.localname(".service")
+            local ret = skynet.call(service_mgr, "lua", "LIST")
+            for _, addr in pairs(ret) do
+                skynet.send(addr, "lua", "stop")
+            end
+            skynet.abort()
+            print("gate service exit")
+        end
+    end
 end)

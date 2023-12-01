@@ -13,9 +13,9 @@ skynet.start(function()
     if skynet.getenv("id") == nodeId then
         skynet.newservice("debug_console",8000)
     end
-    skynet.uniqueservice(true, "agentMgr")
+    skynet.uniqueservice("agentMgr")
     if skynet.getenv("cluster_port") then
-        skynet.uniqueservice(true, "nodeMgr")
+        skynet.uniqueservice("nodeMgr")
     end
     clusterMgr = ClusterMgr.new()
     clusterMgr:register(serviceId)

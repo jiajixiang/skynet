@@ -59,6 +59,10 @@ function command.encode(cmd,args,typ,session)
     return result
 end
 
+function command.STOP()
+    skynet.abort()
+end
+
 skynet.start(function()
 	skynet.dispatch("lua", function(session, address, cmd, ...)
 		local f = command[cmd]
