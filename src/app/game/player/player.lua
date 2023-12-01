@@ -7,7 +7,7 @@ function Player:ctor(pid, name, account)
 end
 
 function Player:sendToClient(fd, cmd, args)
-    clusterMgr:send("gate", ".main", "client", "Send_To_Client", fd, cmd, args)
+    clusterMgr:send("gate", ".gateMgr", "sendToClient", fd, cmd, args)
 end
 
 return Player

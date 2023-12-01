@@ -73,6 +73,8 @@ skynet.start(function()
     local serviceId = ".gateMgr"
 	skynet.register(serviceId)
 	gate = skynet.newservice("gate")
+    clusterMgr = ClusterMgr.new()
+    clusterMgr:register(serviceId)
     skynet.call(gate, "lua", "open" , {
 		port = tonumber(skynet.getenv("port")),
 		maxclient = 64,

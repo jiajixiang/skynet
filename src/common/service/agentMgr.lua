@@ -21,4 +21,5 @@ skynet.start(function ()
     local serviceId = ".agentMgr"
 	skynet.register(serviceId)
     clusterMgr = ClusterMgr.new()
+    clusterMgr:register(serviceId)
 end)

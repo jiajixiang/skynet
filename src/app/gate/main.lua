@@ -35,7 +35,7 @@ skynet.start(function()
     clusterMgr = ClusterMgr.new()
     clusterMgr:register(serviceId)
     skynet.uniqueservice("protoloader")
-    gateMgr = skynet.newservice("gateMgr")
+    gateMgr = skynet.uniqueservice("gateMgr")
     while true do
         local cmd = io.read()
         if cmd == "stop" then
