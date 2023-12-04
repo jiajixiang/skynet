@@ -36,8 +36,8 @@ skynet.register_protocol {
 	dispatch = function(session, address, msg, ...)
 		assert(session == client_fd)
 		skynet.ignoreret()	-- session is fd, don't call skynet.ret
-		local cmd,args,typ,session = skynet.call(".protoloader", "lua", "decode", msg)
-		clusterMgr:call("game", ".main", "client", cmd, client_fd, args)
+		local cmd,args,typ,session,targetNodeId = skynet.call(".protoLoader", "lua", "decode", msg)
+		clusterMgr:call(targetNodeId, ".main", "client", cmd, client_fd, args)
 	end,
 }
 
@@ -58,7 +58,7 @@ end
 function CMD.sendToClient(cmd, args)
 	local typ = 1
 	local session = 1
-	local pack = skynet.call(".protoloader", "lua", "encode", cmd, args, typ, session)
+	local pack = skynet.call(".protoLoader", "lua", "encode", cmd, args, typ, session)
 	local package = string.pack(">s2", pack)
 	socket.write(client_fd, package)
 end

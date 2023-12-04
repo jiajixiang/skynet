@@ -34,18 +34,18 @@ skynet.start(function()
     end
     clusterMgr = ClusterMgr.new()
     clusterMgr:register(serviceId)
-    skynet.uniqueservice("protoloader")
-    gateMgr = skynet.uniqueservice("gateMgr")
-    while true do
-        local cmd = io.read()
-        if cmd == "stop" then
-            local service_mgr = skynet.localname(".service")
-            local ret = skynet.call(service_mgr, "lua", "LIST")
-            for _, addr in pairs(ret) do
-                skynet.send(addr, "lua", "stop")
-            end
-            skynet.abort()
-            print("gate service exit")
-        end
-    end
+    skynet.uniqueservice("protoLoader")
+    skynet.uniqueservice("gateMgr")
+    -- while true do
+    --     local cmd = io.read()
+    --     if cmd == "stop" then
+    --         local service_mgr = skynet.localname(".service")
+    --         local ret = skynet.call(service_mgr, "lua", "LIST")
+    --         for _, addr in pairs(ret) do
+    --             skynet.send(addr, "lua", "stop")
+    --         end
+    --         skynet.abort()
+    --         print("gate service exit")
+    --     end
+    -- end
 end)

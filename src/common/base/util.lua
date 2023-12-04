@@ -132,4 +132,15 @@ function util.dump_table(t, prefix, indent_input, print)
     end
 end
 
+---@brief 获取表的所有键
+---@param t table 表
+---@return table 所有键构成的列表
+function table.keys(t)
+    local ret = {}
+    for k,v in pairs(t) do
+        ret[#ret+1] = k
+    end
+    return ret
+end
+
 return util

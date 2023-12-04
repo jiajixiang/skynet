@@ -114,10 +114,10 @@ local function sendPack(cmd, args)
     socket.send(fd, package)
 end
 
-sendPack("C2S_Login", {
-    account = "test",
-    password = "test",
-})
+-- sendPack("C2S_Login", {
+--     account = "test",
+--     password = "test",
+-- })
 
 sendPack("C2S_Create_Player", {
     account = "test",

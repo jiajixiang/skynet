@@ -2,6 +2,7 @@ local skynet = require "skynet"
 require "skynet.manager"   --除了需要引入skynet包以外还要再引入skynet.manager包。
 Rpc = {}
 Client = {}
+
 skynet.init(function()
     require "common.init"
     require "app.game.init"
@@ -33,6 +34,6 @@ skynet.start(function()
     end
     clusterMgr = ClusterMgr.new()
     clusterMgr:register(serviceId)
-    -- clusterMgr:send("login", ".login", "lua", "set", "-------")
+    clusterMgr:send("gate", ".protoLoader", "register", table.keys(Client), skynet.getenv("id"))
     playerMgr = PlayerMgr.new()
 end)

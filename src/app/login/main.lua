@@ -1,13 +1,23 @@
 local skynet = require "skynet"
 
+Rpc = {}
+Client = {}
 skynet.init(function()
     require "common.init"
-    require "app.login.init"
+    require "app.game.init"
 end)
 
 skynet.start(function()
-    skynet.dispatch("lua", function (session, address, cmd, ...)
-        return true
+    skynet.dispatch("lua", function (session, address, cmd, subCmd, ...)
+        if cmd == "client" then
+            local func = Client[subCmd]
+			skynet.ret(skynet.pack(func(...)))
+        elseif cmd == "cluster" then
+            local func = Rpc[subCmd]
+			skynet.ret(skynet.pack(func(...)))
+		else
+			error(string.format("Unknown command %s", tostring(cmd)))
+		end
 	end)
 
 	print("login service start")
@@ -22,7 +32,9 @@ skynet.start(function()
     end
     clusterMgr = ClusterMgr.new()
     clusterMgr:register(serviceId)
-    skynet.uniqueservice("protoloader")
-    local gateMgr = skynet.newservice("gateMgr")
+    loginMgr = LoginMgr.new()
+    skynet.uniqueservice("protoLoader")
+    skynet.newservice("gateMgr")
+
 	print("login service exit")
 end)
