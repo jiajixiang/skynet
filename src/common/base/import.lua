@@ -1,7 +1,6 @@
-
-local string=string
-local table=table
-local pairs=pairs
+local string = string
+local table = table
+local pairs = pairs
 local setfenv = setfenv
 _G._ImportModule = _G._ImportModule or {}
 local _ImportModule = _G._ImportModule
@@ -25,19 +24,17 @@ local function updateImport(PathFile)
 end
 
 local function doImport(PathFile)
-	local func, err = loadfile(_PathFile..PathFile)
-
+	local func, err = loadfile(_PathFile .. PathFile)
 	if not func then
 		print(string.format("ERROR!!!\n%s\n%s", err, debug.traceback()))
 		return func, err
 	end
-
-	local New = {}
+	local New = func()
 	_ImportModule[PathFile] = New
 	--设置原始环境
-	setmetatable(New, {__index = _G})
-	_ENV(func, New)()
-	New.__FILE__ = PathFile
+	setmetatable(New, { __index = _G })
+	local env = _ENV or _G -- lua5.4,setfenv已废除
+	_ENV = New
 
 	if rawget(New, "__init__") then
 		New:__init__()
@@ -61,7 +58,7 @@ end
 
 function localEnvDoFile(fileName)
 	local env = getfenv(2)
-	local func, err = loadfile(_PathFile..fileName)
+	local func, err = loadfile(_PathFile .. fileName)
 	setfenv(func, env)()
 end
 
@@ -80,4 +77,3 @@ end
 function updateLuaByContent(path, content)
 	updateImportByContent(path, content)
 end
-

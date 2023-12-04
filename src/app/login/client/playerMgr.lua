@@ -5,6 +5,10 @@ function client.C2S_Login(fd, args)
     local account = args.account
     local password = args.password
 
+    LoginMgr:sendToClient(fd, "S2C_Login", {
+        account = args.account,
+        result = 1,
+    })
     loginMgr:sendToClient(fd, "S2C_Login", {
         account = args.account,
         result = 1,
