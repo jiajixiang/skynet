@@ -107,22 +107,24 @@ end
 
 protobuf.register_file("../tools/protobuf/all.pb")
 
-local fd = assert(socket.connect("127.0.0.1", 32001))
-local function sendPack(cmd, args)
+local function sendPack(fd, cmd, args)
     local pack = pack_message(cmd, args, 1, 1)
     local package = string.pack(">s2", pack)
     socket.send(fd, package)
 end
 
--- sendPack("C2S_Login", {
---     account = "test",
---     password = "test",
--- })
-
-sendPack("C2S_Create_Player", {
+local fd = assert(socket.connect("127.0.0.1", 33001))
+sendPack(fd, "C2S_Login", {
     account = "test",
-    name = "123456",
+    password = "test",
 })
+
+-- fd = assert(socket.connect("127.0.0.1", 32001))
+
+-- sendPack(fd, "C2S_Create_Player", {
+--     account = "test",
+--     name = "123456",
+-- })
 
 local function print_package(...)
     print(...)

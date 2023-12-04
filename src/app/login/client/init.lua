@@ -1,1 +1,1 @@
-require "app.game.client.playerMgr"
+require "app.login.client.playerMgr"

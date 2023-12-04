@@ -4,7 +4,7 @@ Rpc = {}
 Client = {}
 skynet.init(function()
     require "common.init"
-    require "app.game.init"
+    require "app.login.init"
 end)
 
 skynet.start(function()
@@ -35,6 +35,6 @@ skynet.start(function()
     loginMgr = LoginMgr.new()
     skynet.uniqueservice("protoLoader")
     skynet.newservice("gateMgr")
-
+    clusterMgr:send("login", ".protoLoader", "register", table.keys(Client), skynet.getenv("id"))
 	print("login service exit")
 end)
