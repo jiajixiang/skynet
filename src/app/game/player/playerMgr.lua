@@ -1,15 +1,9 @@
 PlayerMgr = class("PlayerMgr")
-
 allPlayers = {}
-globalPid = 0
+allAccountTbl = {}
 
 function getPlayer(pid)
     return allPlayers[pid]
-end
-
-local function getNewPid()
-    globalPid = globalPid + 1
-    return globalPid
 end
 
 function getPlayersByAccount(account)
@@ -23,8 +17,36 @@ function getPlayersByAccount(account)
 end
 
 function addPlayer(account, name)
-    local pid = getNewPid()
-    local player = Player.new(pid, name, account)
-    allPlayers[pid] = player
+    local player = PLAYER.createPlayer(name, account)
+    allPlayers[player.pid] = player
+    if not allAccountTbl[player.account] then
+        allAccountTbl[player.account] = {}
+    end
+    allAccountTbl[player.account][player.pid] = player
     return player
+end
+
+local function onReqCreatePlayer(fd, args)
+    print(fd, table.dump(args))
+    local account = args.account
+    local name = args.name
+    -- local player = playerMgr:addPlayer(account, name)
+    local player = addPlayer(account, name)
+    player:sendToClient(fd, "S2C_Create_Player", {
+        pid = player.pid,
+        result = 1,
+    })
+    return true
+end
+
+local function onQueryPlayers(account)
+    if allAccountTbl[account] then
+        return table.keys(allAccountTbl[account])
+    end
+end
+
+function __init__()
+    for_maker.C2S_Create_Player = onReqCreatePlayer
+
+    for_internal.reqQueryPlayers = onQueryPlayers
 end

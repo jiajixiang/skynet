@@ -27,4 +27,8 @@ function ClusterMgr:register(serviceName)
     return skynet.call(self.nodeMgr, "lua", "register", serviceName)
 end
 
+function createClusterMgr()
+    return ClusterMgr.new()
+end
+
 return ClusterMgr
