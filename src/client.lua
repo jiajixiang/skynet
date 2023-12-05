@@ -119,12 +119,11 @@ sendPack(fd, "C2S_Login", {
     password = "test",
 })
 
--- fd = assert(socket.connect("127.0.0.1", 32001))
-
--- sendPack(fd, "C2S_Create_Player", {
---     account = "test",
---     name = "123456",
--- })
+fd = assert(socket.connect("127.0.0.1", 32001))
+sendPack(fd, "C2S_Create_Player", {
+    account = "test",
+    name = "123456",
+})
 
 local function print_package(...)
     print(...)

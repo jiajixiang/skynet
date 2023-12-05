@@ -25,8 +25,9 @@ skynet.start(function()
     local nodeId = "game"
     local serviceId = ".main"
     skynet.name(serviceId, skynet.self())
-    if skynet.getenv("id") == nodeId then
-        skynet.newservice("debug_console",8000)
+    local debug_port = skynet.getenv("debug_port")
+    if debug_port then
+        skynet.uniqueservice("debug_console", debug_port)
     end
     -- skynet.newservice("login")
     if skynet.getenv("cluster_port") then
@@ -36,4 +37,10 @@ skynet.start(function()
     clusterMgr:register(serviceId)
     clusterMgr:send("gate", ".protoLoader", "register", table.keys(Client), skynet.getenv("id"))
     playerMgr = PlayerMgr.new()
+    PLAYER_MGR = Import("app/game/player/playerMgr.lua")
+    for key, value in pairs(PLAYER_MGR) do
+        print(key, value)
+    end
+    skynet.uniqueservice("autoUpdata")
+	print("game service exit")
 end)

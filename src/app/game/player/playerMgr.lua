@@ -1,15 +1,9 @@
-local PlayerMgr = class("PlayerMgr")
+PlayerMgr = class("PlayerMgr")
 
 allPlayers = {}
 globalPid = 0
-function PlayerMgr:ctor()
-end
 
-function PlayerMgr:release()
-    allPlayers[self.pid] = nil
-end
-
-function PlayerMgr:getPlayer(pid)
+function getPlayer(pid)
     return allPlayers[pid]
 end
 
@@ -18,7 +12,7 @@ local function getNewPid()
     return globalPid
 end
 
-function PlayerMgr:getPlayersByAccount(account)
+function getPlayersByAccount(account)
     local ret = {}
     for pid, player in pairs(allPlayers) do
         if player.account == account then
@@ -28,11 +22,9 @@ function PlayerMgr:getPlayersByAccount(account)
     return ret
 end
 
-function PlayerMgr:addPlayer(account, name)
+function addPlayer(account, name)
     local pid = getNewPid()
     local player = Player.new(pid, name, account)
     allPlayers[pid] = player
     return player
 end
-
-return PlayerMgr
