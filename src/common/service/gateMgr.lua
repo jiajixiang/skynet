@@ -55,8 +55,13 @@ function CMD.sendToClient(fd, cmd, args)
 	skynet.call(agent, "lua", "sendToClient", cmd, args)
 end
 
+function CMD.sendToGame(fd, cmd, args)
+	-- body
+end
+
 skynet.init(function ()
     require "common.init"
+    CLUSTER_MGR = Import("common/base/clusterMgr.lua")
 end)
 
 skynet.start(function()
@@ -73,8 +78,7 @@ skynet.start(function()
     local serviceId = ".gateMgr"
 	skynet.register(serviceId)
 	gate = skynet.newservice("gate")
-    clusterMgr = ClusterMgr.new()
-    clusterMgr:register(serviceId)
+    CLUSTER_MGR.register(serviceId)
     skynet.call(gate, "lua", "open" , {
 		port = tonumber(skynet.getenv("port")),
 		maxclient = 64,

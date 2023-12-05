@@ -1,15 +1,15 @@
 local queue = require "skynet.queue"
 local skynet = require "skynet"
 local cluster = require "cluster"
-local ClusterProxy = class("ClusterProxy")
 
-function ClusterProxy:ctor(nodeName, serviceName)
+local Proxy = class("Proxy")
+function Proxy:ctor(nodeName, serviceName)
     self.nodeName = nodeName
     self.serviceName = serviceName
     self.proxy = cluster.proxy(nodeName, "@"..serviceName)
 end
 
-function ClusterProxy:send(...)
+function Proxy:send(...)
     if skynet.getenv("id") == self.nodeName then
         local addr = skynet.localname(self.serviceName)
         return skynet.send(addr, "lua", ...)
@@ -17,7 +17,7 @@ function ClusterProxy:send(...)
 	return skynet.send(self.proxy, "lua", ...)
 end
 
-function ClusterProxy:call(...)
+function Proxy:call(...)
     if skynet.getenv("id") == self.nodeName then
         local addr = skynet.localname(self.serviceName)
         return skynet.call(addr, "lua", ...)
@@ -25,4 +25,4 @@ function ClusterProxy:call(...)
 	return skynet.call(self.proxy, "lua", ...)
 end
 
-return ClusterProxy
+return Proxy

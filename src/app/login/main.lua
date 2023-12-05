@@ -30,13 +30,13 @@ skynet.start(function()
         skynet.uniqueservice("debug_console", debug_port)
     end
     if skynet.getenv("cluster_port") then
-        skynet.uniqueservice("nodeMgr")
+        NODE_MGR.register(serviceId)
+        NODE_MGR.init()
     end
-    clusterMgr = ClusterMgr.new()
-    clusterMgr:register(serviceId)
     skynet.uniqueservice("protoLoader")
     skynet.newservice("gateMgr")
-    clusterMgr:send("login", ".protoLoader", "register", table.keys(for_maker), skynet.getenv("id"))
-    clusterMgr:send("game", ".main", "cluster", "reqQueryPlayers", "1")
+
+    CLUSTER_MGR.register(serviceId)
+    PROTO_PROXY.register(table.keys(for_maker), skynet.getenv("id"))
 	print("login service exit")
 end)

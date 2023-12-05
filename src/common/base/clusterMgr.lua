@@ -1,34 +1,15 @@
-local queue = require "skynet.queue"
+
 local skynet = require "skynet"
-
-local ClusterMgr = class("ClusterMgr")
-
-function ClusterMgr:ctor()
-    self.nodeMgr = skynet.localname(".nodeMgr")
+function register(serviceName)
 end
 
-function ClusterMgr:send(nodeId, serviceName, ...)
-    if skynet.getenv("id") == nodeId then
-        local addr = skynet.localname(serviceName)
-        return skynet.send(addr, "lua", ...)
-    end
-    return skynet.send(self.nodeMgr, "lua", "send", nodeId, serviceName, ...)
+function send( ... )
+    -- body
 end
 
-function ClusterMgr:call(nodeId, serviceName, ...)
-    if skynet.getenv("id") == nodeId then
-        local addr = skynet.localname(serviceName)
-        return skynet.call(addr, "lua", ...)
-    end
-	return skynet.call(self.nodeMgr, "lua", "call", nodeId, serviceName, ...)
+function call( ... )
+    -- body
 end
 
-function ClusterMgr:register(serviceName)
-    return skynet.call(self.nodeMgr, "lua", "register", serviceName)
+function __init__()
 end
-
-function createClusterMgr()
-    return ClusterMgr.new()
-end
-
-return ClusterMgr

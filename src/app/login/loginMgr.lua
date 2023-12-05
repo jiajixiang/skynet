@@ -1,15 +1,11 @@
+local skynet = require "skynet"
 function sendToClient(fd, cmd, args)
-    clusterMgr:send("login", ".gateMgr", "sendToClient", fd, cmd, args)
+    skynet.send(".gateMgr", "lua", "sendToClient", fd, cmd, args)
 end
 
 local function onReqLogin(fd, args)
-    print(fd, table.dump(args))
     local account = args.account
     local password = args.password
-    LOGIN_MGR.sendToClient(fd, "S2C_Login", {
-        account = args.account,
-        result = 1,
-    })
     LOGIN_MGR.sendToClient(fd, "S2C_Login", {
         account = args.account,
         result = 1,

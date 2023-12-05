@@ -5,6 +5,7 @@ local string = require "string"
 local socket = require "skynet.socket"
 require "common.base.init"
 
+local nodeId = skynet.getenv("id")
 local gateMgr
 local host
 local send_request
@@ -37,7 +38,9 @@ skynet.register_protocol {
 		assert(session == client_fd)
 		skynet.ignoreret()	-- session is fd, don't call skynet.ret
 		local cmd,args,typ,session,targetNodeId = skynet.call(".protoLoader", "lua", "decode", msg)
-		clusterMgr:call(targetNodeId, ".main", "client", cmd, client_fd, args)
+		if targetNodeId == nodeId then
+			skynet.send(".main", "lua", "client", cmd, client_fd, args)
+		end
 	end,
 }
 
@@ -63,10 +66,13 @@ function CMD.sendToClient(cmd, args)
 	socket.write(client_fd, package)
 end
 
+skynet.init(function()
+    CLUSTER_MGR = Import("common/base/clusterMgr.lua")
+end)
+
 skynet.start(function()
 	skynet.dispatch("lua", function(session, address, cmd, ...)
 		local f = CMD[cmd]
 		skynet.ret(skynet.pack(f(...)))
 	end)
-	clusterMgr = ClusterMgr.new()
 end)

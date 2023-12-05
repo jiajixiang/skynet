@@ -20,6 +20,5 @@ skynet.start(function()
     end
     clusterMgr = ClusterMgr.new()
     clusterMgr:register(serviceId)
-    --clusterMgr:send("login", ".login", "lua", "set", "-------")
 	print("agent service exit")
 end)

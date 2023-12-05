@@ -76,6 +76,10 @@ function command.stop()
     skynet.abort()
 end
 
+skynet.init(function ()
+    CLUSTER_MGR = Import("common/base/clusterMgr.lua")
+end)
+
 skynet.start(function()
 	skynet.dispatch("lua", function(session, address, cmd, ...)
 		local f = command[cmd]
@@ -87,8 +91,7 @@ skynet.start(function()
 	end)
     local serviceId = ".protoLoader"
 	skynet.register(serviceId)
-    clusterMgr = ClusterMgr.new()
-    clusterMgr:register(serviceId)
+    CLUSTER_MGR.register(serviceId)
     protobuf.register_file("../protobuf/all.pb")
     sharetable.loadfile(protoFileName, protoFileName)
     -- proto = sharetable.query("proto")

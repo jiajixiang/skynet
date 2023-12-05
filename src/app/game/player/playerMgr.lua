@@ -27,7 +27,6 @@ function addPlayer(account, name)
 end
 
 local function onReqCreatePlayer(fd, args)
-    print(fd, table.dump(args))
     local account = args.account
     local name = args.name
     -- local player = playerMgr:addPlayer(account, name)

@@ -33,9 +33,8 @@ skynet.start(function()
     if skynet.getenv("cluster_port") then
         skynet.uniqueservice("nodeMgr")
     end
-    clusterMgr = ClusterMgr.new()
-    clusterMgr:register(serviceId)
-    clusterMgr:send("gate", ".protoLoader", "register", table.keys(for_maker), skynet.getenv("id"))
+    PROTO_PROXY.register(table.keys(for_maker), skynet.getenv("id"))
+    --clusterMgr:send("gate", ".protoLoader", "register", table.keys(for_maker), skynet.getenv("id"))
     skynet.uniqueservice("autoUpdata")
 	print("game service exit")
 end)

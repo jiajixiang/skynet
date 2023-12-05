@@ -1,7 +1,6 @@
 local cluster = require "cluster"
 local skynet = require "skynet"
 require "skynet.manager"
-local command = {}
 local nodes = {}
 
 local function initNotes()
@@ -16,15 +15,7 @@ local function initNotes()
     end
 end
 
-local function init()
-    initNotes()
-    local cluster_port = tonumber(skynet.getenv("cluster_port"))
-    cluster.open(cluster_port)
-    cluster.reload(nodes)
-    return true
-end
-
-function command.REGISTER(serviceName)
+function register(serviceName)
     local addr = skynet.localname(serviceName)
     local nodeId = skynet.getenv("id")
     local serverId = skynet.getenv("serverId")
@@ -48,36 +39,10 @@ function command.REGISTER(serviceName)
     return true
 end
 
-function command.STOP()
-    skynet.abort()
+function init()
+    initNotes()
+    local cluster_port = tonumber(skynet.getenv("cluster_port"))
+    cluster.open(cluster_port)
+    cluster.reload(nodes)
+    return true
 end
-
-skynet.init(function()
-    require "common.init"
-end)
-
-skynet.start(function()
-	skynet.dispatch("lua", function(session, address, cmd, ...)
-		cmd = cmd:upper()
-		if cmd == "PING" then
-			assert(session == 0)
-			local str = (...)
-			if #str > 20 then
-				str = str:sub(1,20) .. "...(" .. #str .. ")"
-			end
-			skynet.error(string.format("%s ping %s", skynet.address(address), str))
-			return
-		end
-		local f = command[cmd]
-		if f then
-			skynet.ret(skynet.pack(f(...)))
-		else
-			error(string.format("Unknown command %s", tostring(cmd)))
-		end
-	end)
-
-    local serviceId = ".nodeMgr"
-	skynet.register(serviceId)
-    init()
---	skynet.traceproto("lua", false)	-- true off tracelog
-end)
