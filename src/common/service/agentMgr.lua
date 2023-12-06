@@ -14,12 +14,11 @@ local handler = {}
 local user_online = {}
 
 skynet.init(function ()
-
+    NODE_MGR = Import("common/base/nodeMgr.lua")
 end)
 
 skynet.start(function ()
     local serviceId = ".agentMgr"
 	skynet.register(serviceId)
-    clusterMgr = ClusterMgr.new()
-    clusterMgr:register(serviceId)
+    NODE_MGR.register(serviceId)
 end)

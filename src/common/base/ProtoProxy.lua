@@ -1,26 +1,33 @@
-local queue = require "skynet.queue"
 local skynet = require "skynet"
-local cluster = require "cluster"
 
 local AllProxyTbl = {}
 
 local ProtoProxy = class("ProtoProxy", Proxy)
 
 function ProtoProxy:ctor(nodeId)
-    if "login" == skynet.getenv("id") then
-        self.nodeId = "login"
+    local serviceId = ".protoLoader"
+    local addr = skynet.localname(serviceId)
+    if addr then
+        self.internal = addr
+        self.nodeId = skynet.getenv("id")
     else
         self.nodeId = "gate"
+        self.proxy = Proxy.new(self.nodeId, serviceId)
     end
-    self.proxy = Proxy.new(self.nodeId, ".protoLoader")
 end
 
 function ProtoProxy:send(...)
+    if self.internal then
+        return skynet.send(self.internal, "lua", ...)
+    end
     return self.proxy:send(...)
 end
 
 function ProtoProxy:call(...)
-    return self.proxy:call(...)
+    if self.internal then
+        return skynet.send(self.internal, "lua", ...)
+    end
+    return self.proxy:send(...)
 end
 
 local function _allocProxy()

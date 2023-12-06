@@ -1,6 +1,7 @@
 local skynet = require "skynet"
 local protobuf = require "protobuf"
 local netpack = require "skynet.netpack"
+local cluster = require "skynet.cluster"
 local string = require "string"
 local socket = require "skynet.socket"
 require "common.base.init"
@@ -37,10 +38,10 @@ skynet.register_protocol {
 	dispatch = function(session, address, msg, ...)
 		assert(session == client_fd)
 		skynet.ignoreret()	-- session is fd, don't call skynet.ret
-		local cmd,args,typ,session,targetNodeId = skynet.call(".protoLoader", "lua", "decode", msg)
-		if targetNodeId == nodeId then
-			skynet.send(".main", "lua", "client", cmd, client_fd, args)
-		end
+		local cmd,args,typ,session = skynet.call(".protoLoader", "lua", "decode", msg)
+		cluster.send("game", ".main", "client", cmd, client_fd, args)
+		-- local proxy = Proxy.new("game", ".main")
+		-- proxy:send("client", cmd, client_fd, args)
 	end,
 }
 

@@ -25,15 +25,14 @@ skynet.start(function()
 	print("gate service start")
     local serviceId = ".main"
     skynet.name(serviceId, skynet.self())
-    if skynet.getenv("cluster_port") then
-        skynet.uniqueservice("nodeMgr")
-    end
     local debug_port = skynet.getenv("debug_port")
     if debug_port then
         skynet.uniqueservice("debug_console", debug_port)
     end
-    clusterMgr = ClusterMgr.new()
-    clusterMgr:register(serviceId)
+    if skynet.getenv("cluster_port") then
+        NODE_MGR.register(serviceId)
+        NODE_MGR.init()
+    end
     skynet.uniqueservice("protoLoader")
     skynet.uniqueservice("gateMgr")
     -- while true do

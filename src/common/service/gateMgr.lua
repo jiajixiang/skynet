@@ -35,8 +35,8 @@ function SOCKET.warning(fd, size)
 	print("socket warning", fd, size)
 end
 
-function SOCKET.data(fd, msg)
-	print("socket data",fd, msg)
+function SOCKET.data(fd, msg, sz)
+	print("socket data",fd, msg, sz)
 end
 
 function CMD.start(conf)
@@ -55,13 +55,15 @@ function CMD.sendToClient(fd, cmd, args)
 	skynet.call(agent, "lua", "sendToClient", cmd, args)
 end
 
-function CMD.sendToGame(fd, cmd, args)
+function CMD.client2Game(fd, cmd, args)
+	print(fd, cmd, args)
 	-- body
 end
 
 skynet.init(function ()
     require "common.init"
-    CLUSTER_MGR = Import("common/base/clusterMgr.lua")
+	NODE_MGR = Import("common/base/nodeMgr.lua")
+	PROTO_CATALOG_MGR = Import("common/base/protoCatalogMgr.lua")
 end)
 
 skynet.start(function()
@@ -77,8 +79,8 @@ skynet.start(function()
 	end)
     local serviceId = ".gateMgr"
 	skynet.register(serviceId)
+	NODE_MGR.register(serviceId)
 	gate = skynet.newservice("gate")
-    CLUSTER_MGR.register(serviceId)
     skynet.call(gate, "lua", "open" , {
 		port = tonumber(skynet.getenv("port")),
 		maxclient = 64,

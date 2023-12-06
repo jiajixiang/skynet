@@ -28,10 +28,9 @@ skynet.start(function()
         skynet.uniqueservice("debug_console", debug_port)
     end
     if skynet.getenv("cluster_port") then
-        skynet.uniqueservice("nodeMgr")
+        NODE_MGR.register(serviceId)
+        NODE_MGR.init()
     end
-    clusterMgr = ClusterMgr.new()
-    clusterMgr:register(serviceId)
 
 	print("db service exit")
     skynet.exit()

@@ -7,15 +7,28 @@ local AllProxyTbl = {}
 local GateProxy = class("GateProxy", Proxy)
 
 function GateProxy:ctor()
-    self.nodeId = skynet.getenv("id")
-    self.proxy = Proxy.new("gate", ".main")
+    local serviceId = ".gateMgr"
+    local addr = skynet.localname(serviceId)
+    if addr then
+        self.internal = addr
+        self.nodeId = skynet.getenv("id")
+    else
+        self.nodeId = "gate"
+        self.proxy = Proxy.new(self.nodeId, serviceId)
+    end
 end
 
 function GateProxy:send(...)
+    if self.internal then
+        return skynet.send(self.internal, "lua", ...)
+    end
     return self.proxy:send(...)
 end
 
 function GateProxy:call(...)
+    if self.internal then
+        return skynet.call(self.internal, "lua", ...)
+    end
     return self.proxy:call(...)
 end
 
@@ -30,5 +43,3 @@ function sendToClient( ... )
     local proxy = _allocProxy()
     proxy:send("sendToClient", ...)
 end
-
-return GateProxy

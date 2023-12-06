@@ -10,6 +10,7 @@ end)
 
 skynet.start(function()
     skynet.dispatch("lua", function(session, address, cmd, subCmd, ...)
+        print(session, address, cmd, subCmd, ...)
         if cmd == "client" then
             local func = for_maker[subCmd]
 			skynet.ret(skynet.pack(func(...)))
@@ -29,12 +30,11 @@ skynet.start(function()
     if debug_port then
         skynet.uniqueservice("debug_console", debug_port)
     end
-    -- skynet.newservice("login")
     if skynet.getenv("cluster_port") then
-        skynet.uniqueservice("nodeMgr")
+        NODE_MGR.register(serviceId)
+        NODE_MGR.init()
     end
     PROTO_PROXY.register(table.keys(for_maker), skynet.getenv("id"))
-    --clusterMgr:send("gate", ".protoLoader", "register", table.keys(for_maker), skynet.getenv("id"))
     skynet.uniqueservice("autoUpdata")
 	print("game service exit")
 end)

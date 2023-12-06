@@ -113,11 +113,11 @@ local function sendPack(fd, cmd, args)
     socket.send(fd, package)
 end
 
-local fd = assert(socket.connect("127.0.0.1", 33001))
-sendPack(fd, "C2S_Login", {
-    account = "test",
-    password = "test",
-})
+-- local fd = assert(socket.connect("127.0.0.1", 33001))
+-- sendPack(fd, "C2S_Login", {
+--     account = "test",
+--     password = "test",
+-- })
 
 fd = assert(socket.connect("127.0.0.1", 32001))
 sendPack(fd, "C2S_Create_Player", {

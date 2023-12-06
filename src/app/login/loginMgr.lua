@@ -1,6 +1,6 @@
 local skynet = require "skynet"
 function sendToClient(fd, cmd, args)
-    skynet.send(".gateMgr", "lua", "sendToClient", fd, cmd, args)
+    GATE_PROXY.sendToClient(fd, cmd, args)
 end
 
 local function onReqLogin(fd, args)

@@ -7,7 +7,6 @@ require "common.init"
 
 local proto = {}
 local protoFileName = "../protobuf/proto.lua"
-local protoCatalog = {}
 --protobuf编码解码
 function test4()
     --编码
@@ -45,9 +44,7 @@ function command.decode(msg)
     if typ == 1 then
         assert(session ~= 0,"session not found")
     end
-    local targetNodeId = protoCatalog[cmd]
-    assert(targetNodeId)
-    return cmd,args,typ,session,targetNodeId
+    return cmd,args,typ,session
 end
 
 function command.encode(cmd,args,typ,session)
@@ -62,22 +59,11 @@ function command.encode(cmd,args,typ,session)
     return result
 end
 
-function command.register(protoTbl, nodeId)
-    if not nodeId then
-        nodeId = skynet.getenv("id")
-    end
-    for key, value in pairs(protoTbl) do
-        protoCatalog[value] = nodeId
-    end
-    return true
-end
-
 function command.stop()
     skynet.abort()
 end
 
 skynet.init(function ()
-    CLUSTER_MGR = Import("common/base/clusterMgr.lua")
 end)
 
 skynet.start(function()
@@ -91,7 +77,6 @@ skynet.start(function()
 	end)
     local serviceId = ".protoLoader"
 	skynet.register(serviceId)
-    CLUSTER_MGR.register(serviceId)
     protobuf.register_file("../protobuf/all.pb")
     sharetable.loadfile(protoFileName, protoFileName)
     -- proto = sharetable.query("proto")

@@ -36,7 +36,6 @@ skynet.start(function()
     skynet.uniqueservice("protoLoader")
     skynet.newservice("gateMgr")
 
-    CLUSTER_MGR.register(serviceId)
     PROTO_PROXY.register(table.keys(for_maker), skynet.getenv("id"))
 	print("login service exit")
 end)
