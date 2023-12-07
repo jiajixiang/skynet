@@ -1,4 +1,3 @@
-
 local protobuf = require "protobuf"
 local skynet = require "skynet"
 local sharetable = require "skynet.sharetable"
@@ -8,24 +7,6 @@ require "common.init"
 local proto = {}
 local protoFileName = "../protobuf/proto.lua"
 protobuf.register_file("../protobuf/all.pb")
---protobuf编码解码
-function test4()
-    --编码
-    local msg = {
-        id = 101,
-        pw = "123456",
-    }
-    local buff = protobuf.encode("C2S_Login", msg)
-    print("len:"..string.len(buff))
-    --解码
-    local umsg = protobuf.decode("C2S_Login", buff)
-    if umsg then
-        print("id:"..umsg.id)
-        print("pw:"..umsg.pw)
-    else
-        print("error")
-    end
-end
 
 local function initProto()
     for cmd, messageId in pairs(sharetable.query(protoFileName)) do

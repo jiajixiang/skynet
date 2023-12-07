@@ -34,7 +34,7 @@ skynet.start(function()
         NODE_MGR.register(serviceId)
         NODE_MGR.init()
     end
-    PROTO_PROXY.register(table.keys(for_maker), skynet.getenv("id"))
+    -- PROTO_PROXY.register(table.keys(for_maker), skynet.getenv("id"))
     skynet.uniqueservice("autoUpdata")
 	print("game service exit")
 end)
