@@ -13,7 +13,7 @@ function Player:ctor(pid, name, account)
 end
 
 function Player:sendToClient(fd, cmd, args)
-    GATE_PROXY.sendToClient(fd, cmd, args)
+    GATE_PROXY.s2cMessageToClient(fd, cmd, args)
 end
 
 function createPlayer(account, name)

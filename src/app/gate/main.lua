@@ -5,6 +5,7 @@ for_internal = {}
 for_maker = {}
 for_cmd = {}
 for_socket = {}
+for_cluster = {}
 
 skynet.init(function()
     require "common.init"
@@ -17,6 +18,9 @@ skynet.start(function()
             local func = for_maker[subCmd]
 			skynet.ret(skynet.pack(func(...)))
         elseif cmd == "cluster" then
+            local func = for_cluster[subCmd]
+			skynet.ret(skynet.pack(func(...)))
+        elseif cmd == "internal" then
             local func = for_internal[subCmd]
 			skynet.ret(skynet.pack(func(...)))
         elseif cmd == "socket" then
@@ -45,8 +49,7 @@ skynet.start(function()
         NODE_MGR.init()
     end
 	GATE_MGR.start()
-    -- skynet.uniqueservice("protoLoader")
-    -- skynet.uniqueservice("gateMgr")
+    skynet.uniqueservice("protoLoader")
     -- while true do
     --     local cmd = io.read()
     --     if cmd == "stop" then

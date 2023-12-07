@@ -10,11 +10,13 @@ end)
 
 skynet.start(function()
     skynet.dispatch("lua", function(session, address, cmd, subCmd, ...)
-        print(session, address, cmd, subCmd, ...)
         if cmd == "client" then
             local func = for_maker[subCmd]
 			skynet.ret(skynet.pack(func(...)))
         elseif cmd == "cluster" then
+            local func = for_cluster[subCmd]
+			skynet.ret(skynet.pack(func(...)))
+        elseif cmd == "internal" then
             local func = for_internal[subCmd]
 			skynet.ret(skynet.pack(func(...)))
 		else
@@ -34,7 +36,7 @@ skynet.start(function()
         NODE_MGR.register(serviceId)
         NODE_MGR.init()
     end
-    -- PROTO_PROXY.register(table.keys(for_maker), skynet.getenv("id"))
+    GATE_PROXY.protoRedirectRegiste(table.keys(for_maker), skynet.getenv("id"))
     skynet.uniqueservice("autoUpdata")
 	print("game service exit")
 end)

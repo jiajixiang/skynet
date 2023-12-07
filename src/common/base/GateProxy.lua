@@ -7,14 +7,15 @@ local AllProxyTbl = {}
 local GateProxy = class("GateProxy", Proxy)
 
 function GateProxy:ctor()
-    local serviceId = ".gateMgr"
+    local serviceId = ".gate"
     local addr = skynet.localname(serviceId)
     if addr then
         self.internal = addr
         self.nodeId = skynet.getenv("id")
+        self.proxy = Proxy.new(self.nodeId, serviceId)
     else
         self.nodeId = "gate"
-        self.proxy = Proxy.new(self.nodeId, serviceId)
+        self.proxy = Proxy.new(self.nodeId, ".main")
     end
 end
 
@@ -39,7 +40,12 @@ local function _allocProxy()
     return AllProxyTbl[math.random(1, #AllProxyTbl)]
 end
 
-function sendToClient( ... )
+function protoRedirectRegiste( ... )
     local proxy = _allocProxy()
-    proxy:send("sendToClient", ...)
+    proxy:send("internal", "protoRedirectRegiste", ...)
+end
+
+function s2cMessageToClient( ... )
+    local proxy = _allocProxy()
+    proxy:send("internal", "s2cMessageToClient", ...)
 end

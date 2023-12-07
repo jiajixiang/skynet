@@ -28,7 +28,7 @@ C2S_Logout
 
 S2C_Logout
 id (Rid
-result (Rresultbproto3
+result (Rresultbproto3
 ^
 player/player.proto"
 Player

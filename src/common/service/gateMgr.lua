@@ -47,19 +47,6 @@ function CMD.close(fd)
 	close_agent(fd)
 end
 
-function CMD.sendToClient(fd, cmd, args)
-	local agent = agent[fd]
-	if not agent then
-		return
-	end
-	skynet.call(agent, "lua", "sendToClient", cmd, args)
-end
-
-function CMD.client2Game(fd, cmd, args)
-	print(fd, cmd, args)
-	-- body
-end
-
 skynet.init(function ()
     require "common.init"
 	NODE_MGR = Import("common/base/nodeMgr.lua")

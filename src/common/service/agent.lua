@@ -39,9 +39,7 @@ skynet.register_protocol {
 		assert(session == client_fd)
 		skynet.ignoreret()	-- session is fd, don't call skynet.ret
 		local cmd,args,typ,session = skynet.call(".protoLoader", "lua", "decode", msg)
-		cluster.send("game", ".main", "client", cmd, client_fd, args)
-		-- local proxy = Proxy.new("game", ".main")
-		-- proxy:send("client", cmd, client_fd, args)
+		skynet.send(".main", "lua", "internal", "c2SMessageRedirect",  client_fd, cmd, args)
 	end,
 }
 
@@ -68,7 +66,7 @@ function CMD.sendToClient(cmd, args)
 end
 
 skynet.init(function()
-    CLUSTER_MGR = Import("common/base/clusterMgr.lua")
+
 end)
 
 skynet.start(function()

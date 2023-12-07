@@ -2,6 +2,7 @@ local skynet = require "skynet"
 local cluster = require "cluster"
 local gate
 local agent = {}
+local protoRedirect = {}
 
 function for_socket.open(fd, addr)
 	skynet.error("New client from : " .. addr)
@@ -35,8 +36,8 @@ end
 
 function for_socket.data(fd, msg, sz)
 	print("socket data",fd, msg, sz)
-    local cmd,args,typ,session = PROTO_LOADER.decode(skynet.tostring(msg, sz))
-    print(cmd, args)
+    -- local cmd,args,typ,session = PROTO_LOADER.decode(skynet.tostring(msg, sz))
+    -- print(cmd, args)
 end
 
 function for_cmd.start(conf)
@@ -45,19 +46,6 @@ end
 
 function for_cmd.close(fd)
 	close_agent(fd)
-end
-
-function for_cmd.sendToClient(fd, cmd, args)
-	local agent = agent[fd]
-	if not agent then
-		return
-	end
-	skynet.call(agent, "lua", "sendToClient", cmd, args)
-end
-
-function for_cmd.client2Game(fd, cmd, args)
-	print(fd, cmd, args)
-	-- body
 end
 
 function start( ... )
@@ -69,6 +57,30 @@ function start( ... )
 	})
 end
 
+local function onProtoRedirectRegiste(tbl, nodeId)
+	assert(nodeId)
+	for key, value in pairs(tbl) do
+		protoRedirect[value] = nodeId
+	end
+end
+
+local function onC2SMessageRedirect(fd, cmd, args)
+	local nodeId = protoRedirect[cmd]
+	assert(nodeId)
+	local proxy = Proxy.new("game", ".main")
+	proxy:send("client", cmd, fd, args)
+end
+
+local function onS2CMessageToClient(fd, cmd, args)
+	local agent = agent[fd]
+	if not agent then
+		return
+	end
+	skynet.call(agent, "lua", "sendToClient", cmd, args)
+end
+
 function __init__()
-    -- body
+    for_internal.protoRedirectRegiste = onProtoRedirectRegiste
+	for_internal.c2SMessageRedirect = onC2SMessageRedirect
+	for_internal.s2cMessageToClient = onS2CMessageToClient
 end

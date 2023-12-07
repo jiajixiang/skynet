@@ -44,5 +44,6 @@ function init()
     local cluster_port = tonumber(skynet.getenv("cluster_port"))
     cluster.open(cluster_port)
     cluster.reload(nodes)
+    print(table.dump(nodes))
     return true
 end

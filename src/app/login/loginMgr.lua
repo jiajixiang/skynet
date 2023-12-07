@@ -14,7 +14,10 @@ local function onReqLogin(fd, args)
 end
 
 local function onReqLogout(fd, args)
-    print(fd, table.dump(args))
+    LOGIN_MGR.sendToClient(fd, "S2C_Logout", {
+        id = fd,
+        result = 1,
+    })
 end
 
 function __init__()
