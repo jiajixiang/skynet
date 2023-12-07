@@ -2,6 +2,7 @@ local skynet = require "skynet"
 local cluster = require "cluster"
 local gate
 local agent = {}
+local proxyTbl = {}
 local protoRedirect = {}
 
 function for_socket.open(fd, addr)
@@ -57,6 +58,15 @@ function start( ... )
 	})
 end
 
+local function _getProxy(nodeId)
+	local proxy = proxyTbl[nodeId]
+	if not proxy then
+		proxy = Proxy.new("game", ".main")
+		proxyTbl[nodeId] = proxy
+	end
+	return proxy
+end
+
 local function onProtoRedirectRegiste(tbl, nodeId)
 	assert(nodeId)
 	for key, value in pairs(tbl) do
@@ -67,7 +77,7 @@ end
 local function onC2SMessageRedirect(fd, cmd, args)
 	local nodeId = protoRedirect[cmd]
 	assert(nodeId)
-	local proxy = Proxy.new("game", ".main")
+	local proxy = _getProxy(nodeId)
 	proxy:send("client", cmd, fd, args)
 end
 
