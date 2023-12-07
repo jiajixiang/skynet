@@ -7,16 +7,8 @@ local AllProxyTbl = {}
 local GateProxy = class("GateProxy", Proxy)
 
 function GateProxy:ctor()
-    local serviceId = ".gate"
-    local addr = skynet.localname(serviceId)
-    if addr then
-        self.internal = addr
-        self.nodeId = skynet.getenv("id")
-        self.proxy = Proxy.new(self.nodeId, serviceId)
-    else
-        self.nodeId = "gate"
-        self.proxy = Proxy.new(self.nodeId, ".main")
-    end
+    self.nodeId = "gate"
+    self.proxy = Proxy.new(self.nodeId, ".main")
 end
 
 function GateProxy:send(...)

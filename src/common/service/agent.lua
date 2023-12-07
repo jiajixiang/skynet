@@ -39,7 +39,7 @@ skynet.register_protocol {
 		assert(session == client_fd)
 		skynet.ignoreret()	-- session is fd, don't call skynet.ret
 		local cmd,args,typ,session = skynet.call(".protoLoader", "lua", "decode", msg)
-		skynet.send(".main", "lua", "internal", "c2SMessageRedirect",  client_fd, cmd, args)
+		skynet.send(".main", "lua", "internal", "c2sMessageRedirect",  client_fd, cmd, args)
 	end,
 }
 

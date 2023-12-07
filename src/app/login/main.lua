@@ -2,6 +2,9 @@ local skynet = require "skynet"
 
 for_internal = {}
 for_maker = {}
+for_cmd = {}
+for_socket = {}
+for_cluster = {}
 
 skynet.init(function()
     require "common.init"
@@ -14,10 +17,22 @@ skynet.start(function()
             local func = for_maker[subCmd]
 			skynet.ret(skynet.pack(func(...)))
         elseif cmd == "cluster" then
+            local func = for_cluster[subCmd]
+			skynet.ret(skynet.pack(func(...)))
+        elseif cmd == "internal" then
             local func = for_internal[subCmd]
 			skynet.ret(skynet.pack(func(...)))
+        elseif cmd == "socket" then
+            local func = for_socket[subCmd]
+			skynet.ret(skynet.pack(func(...)))
+            -- socket api don't need return
 		else
-			error(string.format("Unknown command %s", tostring(cmd)))
+            local func = for_cmd[cmd]
+			if func then
+				skynet.ret(skynet.pack(func(...)))
+			else
+				error(string.format("Unknown command %s", tostring(cmd)))
+			end
 		end
 	end)
 
@@ -33,7 +48,7 @@ skynet.start(function()
         NODE_MGR.register(serviceId)
         NODE_MGR.init()
     end
+	GATE_MGR.start()
     skynet.uniqueservice("protoLoader")
-    skynet.newservice("gateMgr")
 	print("login service exit")
 end)

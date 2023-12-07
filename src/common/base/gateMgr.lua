@@ -4,7 +4,7 @@ local gate
 local agent = {}
 local proxyTbl = {}
 local protoRedirect = {}
-
+local selfNodeId = skynet.getenv("id")
 function for_socket.open(fd, addr)
 	skynet.error("New client from : " .. addr)
     if not agent[fd] then
@@ -76,7 +76,9 @@ end
 
 local function onC2SMessageRedirect(fd, cmd, args)
 	local nodeId = protoRedirect[cmd]
-	assert(nodeId)
+	if not nodeId then
+		nodeId = selfNodeId
+	end
 	local proxy = _getProxy(nodeId)
 	proxy:send("client", cmd, fd, args)
 end
@@ -91,6 +93,6 @@ end
 
 function __init__()
     for_internal.protoRedirectRegiste = onProtoRedirectRegiste
-	for_internal.c2SMessageRedirect = onC2SMessageRedirect
+	for_internal.c2sMessageRedirect = onC2SMessageRedirect
 	for_internal.s2cMessageToClient = onS2CMessageToClient
 end
