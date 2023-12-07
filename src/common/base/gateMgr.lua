@@ -61,7 +61,7 @@ end
 local function _getProxy(nodeId)
 	local proxy = proxyTbl[nodeId]
 	if not proxy then
-		proxy = Proxy.new("game", ".main")
+		proxy = Proxy.new(nodeId, ".main")
 		proxyTbl[nodeId] = proxy
 	end
 	return proxy
