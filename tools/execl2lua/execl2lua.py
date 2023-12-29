@@ -7,6 +7,20 @@ inputDir = "./"
 outputDir = "./../../src/etc/cfg"
 def readExecl():
     return 1
+    
+import xlrd
+
+def getCellData(sheets, row, col):
+    for merged_cell in sheets.merged_cells:
+        start_row, end_row, start_column, end_colum = merged_cell[0], merged_cell[1], merged_cell[2], merged_cell[3]
+        if start_row <= row and row < end_row and start_column <= col and col < end_colum:
+            cell = sheets.cell(start_row, start_column)
+            cellValue = cell.value
+            return cellValue, True
+    cell = sheets.cell(row, col)
+    cellValue = cell.value
+    return cellValue, False
+
 def main():
     sheetFileDict = {}
     for root,dirs,files in os.walk(inputDir):
@@ -20,65 +34,50 @@ def main():
     for fileName, filePath in sheetFileDict.items():
         print(fileName, filePath)
         sheetRet[fileName] = {}
-        workBook = xlrd.open_workbook(filePath)
+        workBook = xlrd.open_workbook(filePath, formatting_info=True)
         for sheets in workBook.sheets():        # 所有表
-            maxMergeLevel = 1
+            print("\t",sheets.name)
             ns = sheets.nrows
+            maxMergeLevel = 1
             for row in range(ns):     # 第几行
-                cs = sheets.ncols
-                sstin = ""
-                for col in range(cs): # 第几列
-                    sheetData = sheets.cell(row, col).value  #sheets[row][col]
-                    sstin = sstin + "\t" + str(sheetData)
-                print(sstin)
-            for row in range(ns):     # 第几行
-                isMerge = False
                 cs = sheets.ncols
                 for col in range(cs): # 第几列
                     if row > 3:
-                        sheetData = sheets.cell(row, col).value  #sheets[row][col]
-                        lastRowSheetData = None
-                        print(row, col)
-                        if row - 1 >= 0:
-                            lastRowSheetData = sheets.cell(row - 1, col).value
-                        if not isMerge and lastRowSheetData and lastRowSheetData == sheetData:
-                            isMerge = True
-                            print(row, col, "isMerge", row - 1, col)
-                        nextRowSheetData = None
-                        if row + 1 <= ns:
-                            nextRowSheetData = sheets.cell(row + 1, col).value
-                        if not isMerge and nextRowSheetData and nextRowSheetData == sheetData:
-                            isMerge = True
-                            print(row, col, "isMerge", row + 1, col)
-                        print()
+                        cellValue, isMerge = getCellData(sheets, row, col)
                         if isMerge:
                             if maxMergeLevel < col + 1:
                                 maxMergeLevel = col + 1
                         else:
                             break
             print(maxMergeLevel)
-        # for sheets in workBook.sheets():        # 所有表
-        #     explanatory = {}
-        #     ids = {}
-        #     dataTypes = {}
-        #     data = {}
-        #     for row in range(sheets.nrows):     # 第几行
-        #         colId = sheets.cell(row, 0).value
-        #         isMerge = False
-        #         for col in range(sheets.ncols): # 第几列
-        #             if row == 0:
-        #                     explanatory[col] = sheetData
-        #             elif row == 1:
-        #                     ids[col] = sheetData
-        #             elif row == 2:
-        #                     dataTypes[col] = sheetData
-        #             elif row == 3:
-        #                     if type(sheetData) == "sting":
-        #                         print()
-        #             else:
-        #     for key, values in data.items():
-        #         st = ""
-        #         for id, value in values.items():
-        #             st = st + " " + str(value)
-        #         print(st)
+            explanatory = {}
+            keys = {}
+            dataTypes = {}
+            data = {}
+            for row in range(sheets.nrows):     # 第几行
+                tagTbl = data
+                tblData = {}
+                for col in range(sheets.ncols): # 第几列
+                    cellValue, isMerge = getCellData(sheets, row, col)
+                    if row == 0:
+                        explanatory[col] = cellValue
+                    elif row == 1:
+                        keys[col] = cellValue
+                    elif row == 2:
+                        dataTypes[col] = cellValue
+                    elif row > 3:
+                        key = keys[col]
+                        if cellValue:
+                            tblData[key] = cellValue
+                            if col < maxMergeLevel:
+                                if not tagTbl.get(cellValue):
+                                    tagTbl[cellValue] = {}
+                                tagTbl = tagTbl[cellValue]
+                if len(tblData) > 0:
+                    for key, value in tblData.items():
+                        tagTbl[key] = value
+            for key1, value1 in data.items():
+                for key2, value2 in value1.items():
+                    for key3, value3 in value2.items():
+                        print(key1, key2, key3, value3)
 main()
