@@ -4,7 +4,6 @@ for_internal = {}
 for_maker = {}
 for_cmd = {}
 for_socket = {}
-for_cluster = {}
 
 skynet.init(function()
     require "common.init"
@@ -15,9 +14,6 @@ skynet.start(function()
     skynet.dispatch("lua", function (session, address, cmd, subCmd, ...)
         if cmd == "client" then
             local func = for_maker[subCmd]
-			skynet.ret(skynet.pack(func(...)))
-        elseif cmd == "cluster" then
-            local func = for_cluster[subCmd]
 			skynet.ret(skynet.pack(func(...)))
         elseif cmd == "internal" then
             local func = for_internal[subCmd]

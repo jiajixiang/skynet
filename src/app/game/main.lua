@@ -2,6 +2,7 @@ local skynet = require "skynet"
 require "skynet.manager"   --除了需要引入skynet包以外还要再引入skynet.manager包。
 for_internal = {}
 for_maker = {}
+for_cluster = {}
 
 skynet.init(function()
     require "common.init"

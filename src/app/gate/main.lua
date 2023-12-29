@@ -17,9 +17,6 @@ skynet.start(function()
         if cmd == "client" then
             local func = for_maker[subCmd]
 			skynet.ret(skynet.pack(func(...)))
-        elseif cmd == "cluster" then
-            local func = for_cluster[subCmd]
-			skynet.ret(skynet.pack(func(...)))
         elseif cmd == "internal" then
             local func = for_internal[subCmd]
 			skynet.ret(skynet.pack(func(...)))
