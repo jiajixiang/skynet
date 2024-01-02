@@ -1,7 +1,9 @@
+# -*- coding: utf-8 -*-
 import xlrd
 import xlwt
 from xlrd import open_workbook
 import os
+import math
 
 inputDir = "./"
 outputDir = "./../../src/etc/cfg"
@@ -36,7 +38,6 @@ def main():
         sheetRet[fileName] = {}
         workBook = xlrd.open_workbook(filePath, formatting_info=True)
         for sheets in workBook.sheets():        # 所有表
-            print("\t",sheets.name)
             ns = sheets.nrows
             maxMergeLevel = 1
             for row in range(ns):     # 第几行
@@ -49,7 +50,6 @@ def main():
                                 maxMergeLevel = col + 1
                         else:
                             break
-            print(maxMergeLevel)
             explanatory = {}
             keys = {}
             dataTypes = {}
@@ -68,7 +68,10 @@ def main():
                     elif row > 3:
                         key = keys[col]
                         if cellValue:
-                            tblData[key] = cellValue
+                            if dataTypes[col] == "int32":
+                                tblData[key] = int(cellValue)
+                            elif dataTypes[col] == "string":
+                                tblData[key] = cellValue
                             if col < maxMergeLevel:
                                 if not tagTbl.get(cellValue):
                                     tagTbl[cellValue] = {}
@@ -76,8 +79,44 @@ def main():
                 if len(tblData) > 0:
                     for key, value in tblData.items():
                         tagTbl[key] = value
-            for key1, value1 in data.items():
-                for key2, value2 in value1.items():
-                    for key3, value3 in value2.items():
-                        print(key1, key2, key3, value3)
+            luaFileName = fileName[:fileName.find(".")] + ".lua"
+            with open(luaFileName, 'w', encoding='utf-8') as file:
+                file.write("local data = {\n")
+                if maxMergeLevel == 1:
+                    for key1, value1 in data.items():
+                        file.write("\t[" + str(math.floor(key1)) + "] = {\n")
+                        for key4, value4 in value1.items():
+                            if type(value4) == str :
+                                file.write("\t\t" + key4 + " = \"" + value4 +"\",\n")
+                            else:
+                                file.write("\t\t" + key4 + " = " + str(value4) +",\n")
+                        file.write("\t},\n")
+                elif maxMergeLevel == 2:
+                    for key1, value1 in data.items():
+                        file.write("\t[" + str(math.floor(key1)) + "] = {\n")
+                        for key2, value2 in value1.items():
+                            file.write("\t\t[" + str(math.floor(key2)) + "] = {\n")
+                            for key4, value4 in value2.items():
+                                if type(value4) == str :
+                                    file.write("\t\t\t" + key4 + " = \"" + value4 +"\",\n")
+                                else:
+                                    file.write("\t\t\t" + key4 + " = " + str(value4) +",\n")
+                            file.write("\t\t},\n")
+                        file.write("\t},\n")
+                elif maxMergeLevel == 3:
+                    for key1, value1 in data.items():
+                        file.write("\t[" + str(math.floor(key1)) + "] = {\n")
+                        for key2, value2 in value1.items():
+                            file.write("\t\t[" + str(math.floor(key2)) + "] = {\n")
+                            for key3, value3 in value2.items():
+                                file.write("\t\t\t[" + str(math.floor(key3)) + "] = {\n")
+                                for key4, value4 in value3.items():
+                                    if type(value4) == str :
+                                        file.write("\t\t\t\t" + key4 + " = \"" + value4 +"\",\n")
+                                    else:
+                                        file.write("\t\t\t\t" + key4 + " = " + str(value4) +",\n")
+                                file.write("\t\t\t},\n")
+                            file.write("\t\t},\n")
+                        file.write("\t},\n")
+                file.write("}")
 main()
