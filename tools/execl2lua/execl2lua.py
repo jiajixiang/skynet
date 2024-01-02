@@ -79,7 +79,7 @@ def main():
                 if len(tblData) > 0:
                     for key, value in tblData.items():
                         tagTbl[key] = value
-            luaFileName = fileName[:fileName.find(".")] + ".lua"
+            luaFileName = "../../src/etc/cfg/" + fileName[:fileName.find(".")] + ".lua"
             with open(luaFileName, 'w', encoding='utf-8') as file:
                 file.write("local data = {\n")
                 if maxMergeLevel == 1:
