@@ -7,9 +7,22 @@ for_cmd = {}
 for_socket = {}
 for_cluster = {}
 
+
+local DOFILELIST =
+{
+	"common.common_class",
+	"srv_common.base.class",
+	"srv_common.base.import",
+	"srv_common.base.table",
+	--"srv_common.base.extend",
+	--"srv_common.base.ldb",
+	"app.gate.global",
+}
+
 skynet.init(function()
-    require "common.init"
-    require "app.gate.global"
+    for _, file in ipairs(DOFILELIST) do
+        require(file)
+    end
 end)
 
 skynet.start(function()

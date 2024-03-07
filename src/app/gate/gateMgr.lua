@@ -59,12 +59,11 @@ function start( ... )
 end
 
 local function _getProxy(nodeId)
-	local proxy = proxyTbl[nodeId]
-	if not proxy then
-		proxy = Proxy.new(nodeId, ".main")
-		proxyTbl[nodeId] = proxy
+	local proxyObj = PROXY.getProxy(nodeId, ".main")
+	if not proxyObj then
+		
 	end
-	return proxy
+	return proxyObj
 end
 
 local function onProtoRedirectRegiste(tbl, nodeId)

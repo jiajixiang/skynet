@@ -48,7 +48,7 @@ skynet.start(function()
     if skynet.getenv("cluster_port") then
         NODE_MGR.register(serviceId)
     end
-    --GATE_PROXY.protoRedirectRegiste(table.keys(for_maker), skynet.getenv("id"))
+    GATE_PROXY.protoRedirectRegiste(table.keys(for_maker), skynet.getenv("id"))
     skynet.uniqueservice("autoUpdata")
     print("game service exit")
 end)

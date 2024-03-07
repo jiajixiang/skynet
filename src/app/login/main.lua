@@ -5,9 +5,22 @@ for_maker = {}
 for_cmd = {}
 for_socket = {}
 
+
+local DOFILELIST =
+{
+	"common.common_class",
+	"srv_common.base.class",
+	"srv_common.base.import",
+	"srv_common.base.table",
+	--"srv_common.base.extend",
+	--"srv_common.base.ldb",
+	"app.login.global",
+}
+
 skynet.init(function()
-    require "common.init"
-    require "app.login.global"
+    for _, file in ipairs(DOFILELIST) do
+        require(file)
+    end
 end)
 
 skynet.start(function()

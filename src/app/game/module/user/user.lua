@@ -79,7 +79,14 @@ end
 
 local function onReqCreatePlayer(vfd, name)
     local userObj = getUserByVfd(vfd)
+    if not userObj then
+        userObj = createUser(vfd, name)
+    end
     userObj:setName(name)
+    userObj:sendToClient(vfd, "S2C_Create_Player", {
+        pid = userObj.userId,
+        result = 1,
+    })
 end
 
 local function onQueryRoles(vfd, account)
