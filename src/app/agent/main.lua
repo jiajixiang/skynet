@@ -17,7 +17,6 @@ skynet.start(function()
     skynet.uniqueservice("agentMgr")
     if skynet.getenv("cluster_port") then
         NODE_MGR.register(serviceId)
-        NODE_MGR.init()
     end
 	print("agent service exit")
 end)

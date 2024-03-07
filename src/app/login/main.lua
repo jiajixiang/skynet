@@ -42,7 +42,6 @@ skynet.start(function()
     end
     if skynet.getenv("cluster_port") then
         NODE_MGR.register(serviceId)
-        NODE_MGR.init()
     end
 	GATE_MGR.start()
     skynet.uniqueservice("protoLoader")

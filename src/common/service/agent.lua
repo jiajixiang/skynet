@@ -4,10 +4,9 @@ local netpack = require "skynet.netpack"
 local cluster = require "skynet.cluster"
 local string = require "string"
 local socket = require "skynet.socket"
-require "common.base.init"
 
 local nodeId = skynet.getenv("id")
-local gateMgr
+local gate_mgr
 local host
 local send_request
 local CMD = {}
@@ -28,7 +27,7 @@ function REQUEST:handshake()
 end
 
 function REQUEST:quit()
-	skynet.call(gateMgr, "lua", "close", client_fd)
+	skynet.call(gate_mgr, "lua", "close", client_fd)
 end
 
 skynet.register_protocol {
@@ -46,7 +45,7 @@ skynet.register_protocol {
 function CMD.start(conf)
 	local fd = conf.client
 	local gate = conf.gate
-	gateMgr = conf.watchdog
+	gate_mgr = conf.watchdog
 
 	client_fd = fd
 	skynet.call(gate, "lua", "forward", fd)

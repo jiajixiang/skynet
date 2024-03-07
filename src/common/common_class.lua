@@ -124,7 +124,7 @@ local function doUpdateFileByFunc(PathFile, func, Old)
 	end
 	--[[
 		class_name = class_tbl,
-	--]]
+	]]--
 	setfenv(func, Old)()
 	local newClassTbl = getClassTbl(Old) 
 
@@ -167,7 +167,7 @@ local function doUpdateFileByFunc(PathFile, func, Old)
 		Old:afterInitModule()
 	end
 
-	return true 
+	return true
 end
 
 function __updateImportByContent(importModule, PathFile, content)
@@ -201,4 +201,3 @@ function __updateImport(importModule, PathFile, loadLuaFunc)
 	doUpdateFileByFunc(PathFile, func, Old)
 	return true
 end
-

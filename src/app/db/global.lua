@@ -1,0 +1,5 @@
+PROXY = Import("common/base/proxy.lua")
+DB_PROXY = Import("common/base/db_proxy.lua")
+MONGO = Import("common/base/mongo.lua")
+DB = Import("app/db/db.lua")
+NODE_MGR = Import("common/base/node_mgr.lua")

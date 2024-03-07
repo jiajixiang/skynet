@@ -3,7 +3,6 @@ local protobuf = require "protobuf"
 local skynet = require "skynet"
 local sharetable = require "skynet.sharetable"
 require "skynet.manager"
-require "common.init"
 
 local proto = {}
 local protoFileName = "../protobuf/proto.lua"

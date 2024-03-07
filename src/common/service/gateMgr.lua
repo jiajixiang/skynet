@@ -48,8 +48,7 @@ function CMD.close(fd)
 end
 
 skynet.init(function ()
-    require "common.init"
-	NODE_MGR = Import("common/base/nodeMgr.lua")
+	NODE_MGR = Import("common/base/node_mgr.lua")
 	PROTO_CATALOG_MGR = Import("common/base/protoCatalogMgr.lua")
 end)
 
@@ -64,7 +63,7 @@ skynet.start(function()
 			skynet.ret(skynet.pack(f(subcmd, ...)))
 		end
 	end)
-    local serviceId = ".gateMgr"
+    local serviceId = ".gate_mgr"
 	skynet.register(serviceId)
 	NODE_MGR.register(serviceId)
 	gate = skynet.newservice("gate")

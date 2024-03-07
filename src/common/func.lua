@@ -1261,26 +1261,6 @@ function isUnLockSkill(skillType, star)
 	return true
 end
 
-local kindHarmTbl = {
-	[COMMON_CONST.SOLDIER_KIND_RIDER] = {
-		[COMMON_CONST.SOLDIER_KIND_FOOT] = true,
-	},
-	[COMMON_CONST.SOLDIER_KIND_FOOT] = {
-		[COMMON_CONST.SOLDIER_KIND_ARROW] = true,
-	},
-	[COMMON_CONST.SOLDIER_KIND_ARROW] = {
-		[COMMON_CONST.SOLDIER_KIND_RIDER] = true,
-	}
-}
-
-function isRestrainKind(sKind, tSKind)
-	return kindHarmTbl[sKind][tSKind]
-end
-
-function isBeRestrainKind(sKind, tSKind)
-	return kindHarmTbl[tSKind][sKind]
-end
-
 function calHeroPolRate(pol, attrBuff)
 	local effectAdd = DATA_POLHERO.getPolHeroEffectAdd(attrBuff)
 	return pol * effectAdd

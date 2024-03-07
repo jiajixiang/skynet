@@ -1,7 +1,0 @@
-require "common.base.class"
-require "common.base.common_class"
-require "common.base.import"
-require "common.base.util"
-require "common.base.timer"
-require "common.base.mongo"
-require "common.base.Proxy"

@@ -2,27 +2,54 @@ local queue = require "skynet.queue"
 local skynet = require "skynet"
 local cluster = require "cluster"
 
-local Proxy = class("Proxy")
-function Proxy:ctor(nodeName, serviceName)
-    self.nodeName = nodeName
-    self.serviceName = serviceName
-    self.proxy = cluster.proxy(nodeName, "@"..serviceName)
+AllProxyTbl = {}
+
+local saveFieldTbl = {
+	_nodeName = function()
+		return nil
+	end,
+    _serviceName = function()
+        return nil
+    end
+}
+
+clsProxy = clsObject:Inherit()
+function clsProxy:__init__(oci)
+	Super(clsProxy).__init__(self, oci)
+    
+	for k, func in pairs(saveFieldTbl) do
+		if oci[k] == nil then
+			self[k] = func()
+		else
+			self[k] = oci[k]
+		end
+	end
+    if skynet.getenv("id") ~= self._nodeName then
+        self.proxy = cluster.proxy(self._nodeName, "@"..self._serviceName)
+    end
+
+    if not AllProxyTbl[self._nodeName] then
+        AllProxyTbl[self._nodeName] = {}
+    end
+    AllProxyTbl[self._nodeName][self._serviceName] = self
 end
 
-function Proxy:send(...)
-    if skynet.getenv("id") == self.nodeName then
-        local addr = skynet.localname(self.serviceName)
-        return skynet.send(addr, "lua", ...)
+function clsProxy:send(...)
+    if not self.proxy then
+        local addr = skynet.localname(self._serviceName)
+        return skynet.call(addr, "lua", ...)
     end
 	return skynet.send(self.proxy, "lua", ...)
 end
 
-function Proxy:call(...)
-    if skynet.getenv("id") == self.nodeName then
-        local addr = skynet.localname(self.serviceName)
+function clsProxy:call(...)
+    if not self.proxy then
+        local addr = skynet.localname(self._serviceName)
         return skynet.call(addr, "lua", ...)
     end
 	return skynet.call(self.proxy, "lua", ...)
 end
 
-return Proxy
+function getProxy(nodeName, serviceName)
+    return AllProxyTbl[nodeName] and AllProxyTbl[nodeName][serviceName]
+end

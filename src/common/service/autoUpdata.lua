@@ -19,7 +19,7 @@ local function tryUpdateFile()
 end
 
 skynet.init(function()
-    require "common.init"
+    
 end)
 
 skynet.start(function()

@@ -15,7 +15,7 @@ local user_online = {}
 
 skynet.init(function ()
     require "common.init"
-    NODE_MGR = Import("common/base/nodeMgr.lua")
+    NODE_MGR = Import("common/base/node_mgr.lua")
 end)
 
 skynet.start(function ()
