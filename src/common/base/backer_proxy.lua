@@ -4,10 +4,10 @@ local saveFieldTbl = {
 local nodeName = "backer"
 local serviceName = ".main"
 
-clsDbProxy = PROXY.clsProxy:Inherit()
+clsBackerProxy = PROXY.clsProxy:Inherit()
 
-function clsDbProxy:__init__(oci)
-    Super(clsDbProxy).__init__(self, oci)
+function clsBackerProxy:__init__(oci)
+    Super(clsBackerProxy).__init__(self, oci)
 
     for k, func in pairs(saveFieldTbl) do
         if oci[k] == nil then
@@ -18,19 +18,19 @@ function clsDbProxy:__init__(oci)
     end
 end
 
-local function createDbProxy()
+local function createBackerProxy()
     local oci = {
         _nodeName = nodeName,
         _serviceName = serviceName
     }
-	local dbProxyObj = clsDbProxy:New(oci)
-    return dbProxyObj
+	local backerProxyObj = clsBackerProxy:New(oci)
+    return backerProxyObj
 end
 
 local function _allocProxy()
     local proxyObj = PROXY.getProxy(nodeName, serviceName)
     if not proxyObj then
-        proxyObj = createDbProxy()
+        proxyObj = createBackerProxy()
     end
     return proxyObj
 end

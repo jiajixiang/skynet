@@ -1,6 +1,6 @@
 PROXY = Import("common/base/proxy.lua")
 GATE_PROXY = Import("common/base/gate_proxy.lua")
-DB_PROXY = Import("common/base/db_proxy.lua")
+BACKER_PROXY = Import("common/base/backer_proxy.lua")
 MONGO = Import("common/base/mongo.lua")
 NODE_MGR = Import("common/base/node_mgr.lua")
 
