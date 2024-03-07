@@ -25,7 +25,7 @@ local DOFILELIST =
 	"srv_common.base.table",
 	--"srv_common.base.extend",
 	--"srv_common.base.ldb",
-	"app.db.global",
+	"app.backer.global",
 }
 
 skynet.init(function()
@@ -35,7 +35,7 @@ skynet.init(function()
 end)
 
 skynet.start(function()
-	print("db service start")
+	print("backer service start")
     skynet.dispatch("lua", function(session, address, cmd, subCmd, ...)
         if cmd == "client" then
             local func = for_maker[subCmd]
@@ -50,7 +50,7 @@ skynet.start(function()
             error(string.format("Unknown command %s", tostring(cmd)))
         end
     end)
-    local nodeId = "db"
+    local nodeId = "backer"
     local serviceId = ".main"
     skynet.name(serviceId, skynet.self())
     local debug_port = skynet.getenv("debug_port")
