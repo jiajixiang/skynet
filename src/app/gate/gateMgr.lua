@@ -59,10 +59,7 @@ function start( ... )
 end
 
 local function _getProxy(nodeId)
-	local proxyObj = PROXY.getProxy(nodeId, ".main")
-	if not proxyObj then
-		
-	end
+	local proxyObj = PROXY.tryGetProxy(nodeId, ".main")
 	return proxyObj
 end
 

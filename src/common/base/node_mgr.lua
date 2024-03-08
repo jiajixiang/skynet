@@ -47,14 +47,7 @@ function startNode()
     print("cluster.reload:", table.dump(nodes))
     for nodeId, nodeData in pairs(nodes) do
         if nodeId ~= selfNodeId and nodeData.status then
-            local proxyObj = PROXY.getProxy(nodeId, ".main")
-            if not proxyObj then
-                local oci = {
-                    _nodeName = nodeId,
-                    _serviceName = ".main"
-                }
-                proxyObj = PROXY.clsProxy:New(oci)
-            end
+            local proxyObj = PROXY.tryGetProxy(nodeId, ".main")
             proxyObj:send("internal", "onNodeStart", data)
         end
     end
@@ -73,14 +66,7 @@ function stopNode()
 
     for nodeId, nodeData in pairs(nodes) do
         if nodeId ~= selfNodeId and nodeData.status then
-            local proxyObj = PROXY.getProxy(nodeId, ".main")
-            if not proxyObj then
-                local oci = {
-                    _nodeName = nodeId,
-                    _serviceName = ".main"
-                }
-                proxyObj = PROXY.clsProxy:New(oci)
-            end
+            local proxyObj = PROXY.tryGetProxy(nodeId, ".main")
             proxyObj:send("internal", "onNodeStop", selfNodeId)
         end
     end

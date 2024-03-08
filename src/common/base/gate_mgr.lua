@@ -59,15 +59,7 @@ function start( ... )
 end
 
 local function _getProxy(nodeId)
-	local proxyObj = PROXY.getProxy(nodeId, ".main")
-	if not proxyObj then
-		local oci = {
-			_nodeName = nodeId,
-			_serviceName = ".main"
-		}
-		local proxyObj = PROXY.clsProxy:New(oci)
-		return proxyObj
-	end
+	local proxyObj = PROXY.tryGetProxy(nodeId, ".main")
 	return proxyObj
 end
 
