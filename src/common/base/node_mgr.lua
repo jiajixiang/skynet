@@ -3,10 +3,9 @@ local skynet = require "skynet"
 require "skynet.manager"
 local nodes = {}
 local cluster_nodes = {}
-function register(serviceName)
+
+local function initNodes()
     local serverId = skynet.getenv("serverId")
-    local cluster_port = tonumber(skynet.getenv("cluster_port"))
-    local nodeId = skynet.getenv("id")
     local db = MONGO.getDb("nodes")
     local cursor = db.nodes:find({
         serverId = serverId
@@ -19,43 +18,94 @@ function register(serviceName)
             cluster_nodes[data.nodeId] = data.ip .. ":" .. data.cluster_port
         end
     end
+end
+
+function startNode()
+    local selfNodeId = skynet.getenv("id")
+    local serverId = skynet.getenv("serverId")
+    local cluster_port = tonumber(skynet.getenv("cluster_port"))
     local data = {
-        nodeId = nodeId,
+        nodeId = selfNodeId,
         serverId = serverId,
         ip = skynet.getenv("ip"),
         cluster_port = cluster_port,
         status = true,
     }
     nodes[data.nodeId] = data
+
+    local db = MONGO.getDb("nodes")
     db.nodes:update({
-        nodeId = nodeId,
+        nodeId = selfNodeId,
         serverId = serverId
     }, data, true, false)
     cluster_nodes[data.nodeId] = data.ip .. ":" .. data.cluster_port
-    local addr = skynet.localname(serviceName)
-    cluster.open(cluster_port)
-    cluster.register(serviceName, addr)
-    cluster.reload(cluster_nodes)
 
+    local addr = skynet.localname(".main")
+    cluster.open(cluster_port)
+    cluster.register(".main", addr)
+    cluster.reload(cluster_nodes)
+    print("cluster.reload:", table.dump(nodes))
     for nodeId, nodeData in pairs(nodes) do
-        if nodeId ~= data.nodeId and nodeData.status then
+        if nodeId ~= selfNodeId and nodeData.status then
             local proxyObj = PROXY.getProxy(nodeId, ".main")
-            local oci = {
-                _nodeName = nodeId,
-                _serviceName = ".main"
-            }
-            local proxyObj = PROXY.clsProxy:New(oci)
-            proxyObj:send("internal", "onNodeStart", data.nodeId)
+            if not proxyObj then
+                local oci = {
+                    _nodeName = nodeId,
+                    _serviceName = ".main"
+                }
+                proxyObj = PROXY.clsProxy:New(oci)
+            end
+            proxyObj:send("internal", "onNodeStart", data)
         end
     end
-    print("cluster.reload:", table.dump(nodes))
-    return true
 end
 
-local function onNodeStart(nodeId)
-    print("onNodeStart", nodeId)
+function stopNode()
+    local selfNodeId = skynet.getenv("id")
+    local serverId = skynet.getenv("serverId")
+    local data = nodes[selfNodeId]
+    data.status = false
+    local db = MONGO.getDb("nodes")
+    db.nodes:update({
+        nodeId = selfNodeId,
+        serverId = serverId
+    }, data, true, false)
+
+    for nodeId, nodeData in pairs(nodes) do
+        if nodeId ~= selfNodeId and nodeData.status then
+            local proxyObj = PROXY.getProxy(nodeId, ".main")
+            if not proxyObj then
+                local oci = {
+                    _nodeName = nodeId,
+                    _serviceName = ".main"
+                }
+                proxyObj = PROXY.clsProxy:New(oci)
+            end
+            proxyObj:send("internal", "onNodeStop", selfNodeId)
+        end
+    end
+    skynet.abort()
+end
+
+function afterInitModule()
+    initNodes()
+end
+
+function systemStartup()
+    initNodes()
+end
+
+local function onNodeStart(data)
+    nodes[data.nodeId] = data
+    print("onNodeStart", data.nodeId)
+end
+
+local function onNodeStop(nodeId)
+    nodes[nodeId].status = false
+    print("onNodeStop", nodeId)
 end
 
 function __init__(...)
     for_internal.onNodeStart = onNodeStart
+    for_internal.onNodeStop = onNodeStop
 end

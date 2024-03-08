@@ -54,9 +54,9 @@ skynet.start(function()
         skynet.uniqueservice("debug_console", debug_port)
     end
     if skynet.getenv("cluster_port") then
-        NODE_MGR.register(serviceId)
+        NODE_MGR.systemStartup()
+        NODE_MGR.startNode()
     end
-	GATE_MGR.start()
     skynet.uniqueservice("protoLoader")
 	print("login service exit")
 end)
