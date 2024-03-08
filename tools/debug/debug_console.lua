@@ -18,4 +18,4 @@ function COMMANDX.print(cmd)
 	return skynet.call(address, "debug", "PRINT", luacode, deepth)
 end
 
-//tools/skynet/service/debug_console.lua
+// /tools/skynet/service/debug_console.lua
