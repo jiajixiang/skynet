@@ -55,8 +55,13 @@ skynet.start(function()
     end
     if skynet.getenv("cluster_port") then
         NODE_MGR.systemStartup()
-        NODE_MGR.startNode()
     end
     skynet.uniqueservice("protoLoader")
 	print("login service exit")
+    -- local result = skynet.call(skynet.localname(".service"), "lua", "LIST")
+    -- print(table.dump(result))
+    -- for serverName, handle in pairs(result) do
+    --     print(serverName)
+    --     skynet.call(handle, "lua", "EXIT")
+    -- end
 end)

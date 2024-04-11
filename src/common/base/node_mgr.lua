@@ -70,6 +70,13 @@ function stopNode()
             proxyObj:send("internal", "onNodeStop", selfNodeId)
         end
     end
+    -- local result = skynet.call(skynet.localname(".service"), "lua", "LIST")
+    -- print(table.dump(result))
+    -- for serverName, handle in pairs(result) do
+    --     print(serverName)
+    --     skynet.call(handle, "lua", "EXIT")
+    -- end
+    skynet.exit()
     skynet.abort()
 end
 
@@ -79,6 +86,7 @@ end
 
 function systemStartup()
     initNodes()
+    startNode()
 end
 
 local function onNodeStart(data)

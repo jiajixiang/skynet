@@ -56,20 +56,7 @@ skynet.start(function()
     end
     if skynet.getenv("cluster_port") then
         NODE_MGR.systemStartup()
-        NODE_MGR.startNode()
     end
 	GATE_MGR.start()
     skynet.uniqueservice("protoLoader")
-    -- while true do
-    --     local cmd = io.read()
-    --     if cmd == "stop" then
-    --         local service_mgr = skynet.localname(".service")
-    --         local ret = skynet.call(service_mgr, "lua", "LIST")
-    --         for _, addr in pairs(ret) do
-    --             skynet.send(addr, "lua", "stop")
-    --         end
-    --         skynet.abort()
-    --         print("gate service exit")
-    --     end
-    -- end
 end)

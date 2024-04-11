@@ -47,7 +47,6 @@ skynet.start(function()
     end
     if skynet.getenv("cluster_port") then
         NODE_MGR.systemStartup()
-        NODE_MGR.startNode()
     end
     GATE_PROXY.protoRedirectRegiste(table.keys(for_maker), skynet.getenv("id"))
     skynet.uniqueservice("autoUpdata")
