@@ -190,5 +190,6 @@ function __updateImport(importModule, PathFile)
 		return false
 	end
 	doUpdateFileByFunc(PathFile, Old)
+	print("hotfix:",PathFile)
 	return true
 end

@@ -7,15 +7,30 @@ local function getUpdateFilePath()
     return "../../src/"..updatePath
 end
 
+local function notifyHotfix(fileList)
+end
+
 local function tryUpdateFile()
 	local updateFilePath = getUpdateFilePath()
 	local func, err = loadfile(updateFilePath)
 	local tbl = func()
-	if tbl.needUpdate then
-		local file_list = tbl.fileList
-		for _, fileName in ipairs(file_list) do
-        end
+	if not tbl.needUpdate then
+        return
     end
+    local hotfixList = {}
+    local fileList = tbl.fileList
+    for _, fileName in ipairs(fileList) do
+        print(fileName)
+    end
+end
+
+local function startTimer( ... )
+    skynet.timeout(100, onTimer)
+end
+
+function onTimer()
+    tryUpdateFile()
+    startTimer()
 end
 
 skynet.init(function()
@@ -26,8 +41,5 @@ skynet.start(function()
     local serviceId = ".autoUpdate"
 	skynet.register(serviceId)
 
-    while true do
-        skynet.sleep(100)
-        tryUpdateFile()
-    end
+    startTimer()
 end)
