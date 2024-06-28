@@ -14,33 +14,39 @@ local function getClassTbl(Module)
 	return classTbl
 end
 
+local function getImportFile(PathFile)
+	local file = io.open(_PathFile .. PathFile, "r")
+	io.input(file)-- 设置默认输入文件
+	local funcString = io.read("*a")
+	io.close()
+	return funcString
+end
+
 local function updateImportByContent(pathFile, content)
 	return __updateImportByContent(_ImportModule, pathFile, content)
 end
 
-local function doImport(PathFile, PathName)
-	local New = {}
-	setmetatable(New, { __index = _G })
-	local file = io.open(_PathFile .. PathFile, "r")
-	io.input(file)-- 设置默认输入文件
-	local funcString = io.read("*a")
-	local func, err = load(funcString, PathName, nil, New)
-	io.close()
-	
+local function doImport(PathFile, Env)
+	if not Env then
+		Env = {}
+		setmetatable(Env, { __index = _G })
+		_ImportModule[PathFile] = Env
+	end
+	local funcString = getImportFile(PathFile)
+	local func, err = load(funcString, nil, nil, Env)
 	-- local func, err = loadfile(_PathFile .. PathFile, nil, New) loadfile存在无法读取最新文件问题
 	if not func then
 		print(string.format("ERROR!!!\n%s\n%s", err, debug.traceback()))
 		return func, err
 	end
 	func()
-	_ImportModule[PathFile] = New
 	--设置原始环境
 	-- local env = _ENV or _G -- lua5.4,setfenv已废除
-	if rawget(New, "__init__") then
-		New:__init__()
+	if rawget(Env, "__init__") then
+		Env:__init__()
 	end
 
-	return New
+	return Env
 end
 
 -- 加载器文件hotloader.lua
@@ -60,8 +66,7 @@ local function hotloader(moduleName, moduleFile)
 end
 
 local function updateImport(PathFile)
-	--doImport(PathFile)
-	return __updateImport(_ImportModule, PathFile, loadfile)
+	return __updateImport(_ImportModule, PathFile)
 end
 
 local function SafeImport(PathFile)
@@ -73,9 +78,8 @@ local function SafeImport(PathFile)
 	return doImport(PathFile)
 end
 
-function Reimport(PathFile)
-	local data = doImport(PathFile)
-	return data
+function Reimport(PathFile, Env)
+	doImport(PathFile, Env)
 end
 
 function localEnvDoFile(fileName)
@@ -92,8 +96,7 @@ function Import(PathFile)
 end
 
 function updateLuaFile(PathFile)
-	local ret = updateImport(PathFile)
-	return ret
+	return updateImport(PathFile)
 end
 
 function updateLuaByContent(path, content)

@@ -1,9 +1,8 @@
-
 function __ImlInterFaceWithCopy(self, imlClass)
 	for k, v in pairs(imlClass) do
 		assert(not self[k])
 		if not self[k] then
-			self[k]=v
+			self[k] = v
 		end
 	end
 end
@@ -11,7 +10,7 @@ end
 function __RemoveInterFace(self, imlClass)
 	for k, v in pairs(imlClass) do
 		assert(self[k])
-		self[k]=nil
+		self[k] = nil
 	end
 end
 
@@ -21,7 +20,7 @@ function __InheritWithCopy(Base, o)
 	for k, v in pairs(Base) do
 		assert(not o[k])
 		if not o[k] then
-			o[k]=v
+			o[k] = v
 		end
 	end
 
@@ -52,7 +51,7 @@ function __refreshInherit(self, oldClass)
 					end
 				end
 			end
-			sub_class.__SuperClass = self 
+			sub_class.__SuperClass = self
 
 			sub_class:refreshInherit(oldClass)
 		end
@@ -106,10 +105,10 @@ local function refreshSubClassFunc(newClassIml, oldClassFunc, depth)
 	end
 end
 
-local function doUpdateFileByFunc(PathFile, func, Old)
-	local oldClassTbl = getClassTbl(Old) 
+local function doUpdateFileByFunc(PathFile, Old)
+	local oldClassTbl = getClassTbl(Old)
 	local oldModuleData = {}
-	if (PathFile ~= "common/const.lua") and (not string.find(PathFile,  "autocode/")) then
+	if (PathFile ~= "common/const.lua") and (not string.find(PathFile, "autocode/")) then
 		for k, v in pairs(Old) do
 			if type(v) ~= "function" then
 				if type(v) == "table" then
@@ -125,8 +124,8 @@ local function doUpdateFileByFunc(PathFile, func, Old)
 	--[[
 		class_name = class_tbl,
 	]]--
-	setfenv(func, Old)()
-	local newClassTbl = getClassTbl(Old) 
+	Reimport(PathFile, Old)
+	local newClassTbl = getClassTbl(Old)
 
 	for newClassName, newClassIml in pairs(newClassTbl) do
 		local oldClassIml = oldClassTbl[newClassName]
@@ -149,14 +148,13 @@ local function doUpdateFileByFunc(PathFile, func, Old)
 			end
 		end
 	end
-	
+
 	for k, v in pairs(newClassTbl) do
 		Old[k] = v
 	end
 
 	for k, v in pairs(oldModuleData) do
 		Old[k] = v
-		LOG.updateFile(string.format("k=%s,v=%s,type=%s", k, string.sub(tostring(v), 1, 50), type(v)))
 	end
 
 	if rawget(Old, "__init__") then
@@ -182,22 +180,15 @@ function __updateImportByContent(importModule, PathFile, content)
 		print(string.format("ERROR!!!\n%s\n%s", err, debug.traceback()))
 		return false
 	end
-	doUpdateFileByFunc(PathFile, func, Old)
+	doUpdateFileByFunc(PathFile, Old)
 	return true
 end
 
-function __updateImport(importModule, PathFile, loadLuaFunc)
+function __updateImport(importModule, PathFile)
 	local Old = importModule[PathFile]
 	if not Old then
 		return false
 	end
-
-	local func, err = loadLuaFunc(PathFile)
-
-	if not func then
-		print(string.format("ERROR!!!\n%s\n%s", err, debug.traceback()))
-		return false
-	end
-	doUpdateFileByFunc(PathFile, func, Old)
+	doUpdateFileByFunc(PathFile, Old)
 	return true
 end
