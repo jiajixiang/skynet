@@ -1,4 +1,5 @@
 local skynet = require "skynet"
+local log = require "log"
 require "skynet.manager"
 
 local function getUpdateFilePath()
@@ -20,7 +21,7 @@ local function tryUpdateFile()
     local hotfixList = {}
     local fileList = tbl.fileList
     for _, fileName in ipairs(fileList) do
-        print(fileName)
+        log.debug(fileName)
     end
 end
 
