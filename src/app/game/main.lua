@@ -103,6 +103,7 @@ skynet.start(function()
     -- 
     -- pcall(skynet.send, ".main", "lua", "internal", cmdline)
     skynet.uniqueservice("autoUpdata")
+    GM_SERVER_MGR.onNodeStart()
     print("game service exit")
     -- updateLuaFile("app/game/module/user/user.lua")
 end)
