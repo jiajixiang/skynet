@@ -99,7 +99,12 @@ local function onNodeStop(nodeId)
     print("onNodeStop", nodeId)
 end
 
+local function onStop()
+    print("onStop")
+end
+
 function __init__(...)
     for_internal.onNodeStart = onNodeStart
     for_internal.onNodeStop = onNodeStop
+    for_internal.stop = onStop
 end
