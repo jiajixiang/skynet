@@ -34,7 +34,7 @@ function onTimer()
 end
 
 skynet.init(function()
-    
+
 end)
 
 skynet.start(function()
